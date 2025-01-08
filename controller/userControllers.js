@@ -201,19 +201,15 @@ const updateUserProfile = async (req, res) => {
 const deactivateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log("=======userid", id);
 
         const adminId = req.user.id;
-        console.log("=======adminid", adminId);
 
         const user = await UserDB.findById(id);
-        console.log("=======user", user);
         if (!user) {
             return res.status(404).json({ message: 'User not found in the system.' }); // 404: Not Found
         }
 
         const admin = await AdminDB.findById(adminId);
-        console.log("=======admin", admin);
         if (!admin || admin.role !== "admin") {
             return res.status(403).json({ message: 'Only admins can access this resource' }); // 403: Forbidden
         }
