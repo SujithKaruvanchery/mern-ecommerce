@@ -9,6 +9,7 @@ const userAuth = (req, res, next) => {
         }
 
         const decoded = jwt.verify(user_token, process.env.JWT_SECRET);
+        console.log(decoded, "=======decoded token")
 
         if (!decoded) {
             return res.status(401).json({ error: 'User is not authorized' });
