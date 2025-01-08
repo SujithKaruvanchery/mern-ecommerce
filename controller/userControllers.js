@@ -23,7 +23,6 @@ const registerUser = async (req, res) => {
 
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        console.log(hashedPassword);
 
         const newUser = new UserDB({
             name, email, password: hashedPassword, mobile
@@ -34,7 +33,7 @@ const registerUser = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' }); // 500: Server Error
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' }); // 500: Internal Server Error
     }
 };
 
@@ -73,6 +72,25 @@ const loginUser = async (req, res) => {
     }
 };
 
+const userProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
 
+        const userData = await UserDB.findById(userId).select('-password');
 
-module.exports = { registerUser, loginUser };
+        if (!userData) {
+            return res.status(404).json({ error: 'User not found in the system.' }); // 404: Not Found
+        }
+
+        if (!userData.isActive) {
+            return res.status(403).json({ error: 'The user account is inactive.' }); // 403: Forbidden
+        }
+
+        res.status(200).json({ message: 'User profile loaded successfully', data: userData }); // 200: OK
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error.message || 'Internal Server Error' }); // 500: Internal Server Error
+    }
+};
+
+module.exports = { registerUser, loginUser, userProfile };
