@@ -228,9 +228,38 @@ const deactivateUser = async (req, res) => {
         return res.status(200).json({ message: 'User deactivated successfully' }); // 200: OK
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Internal Server Error' }); // 500: Internal Server Error
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' }); // 500: Internal Server Error
     }
 };
 
+const activateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
 
-module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile,deactivateUser };
+        const adminId = req.user.id;
+
+        const user = await UserDB.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found in the system.' }); // 404: Not Found
+        }
+
+        const admin = await AdminDB.findById(adminId);
+        if (!admin || admin.role !== "admin") {
+            return res.status(403).json({ message: 'Only admins can access this resource' }); // 403: Forbidden
+        }
+
+        if (user.isActive) {
+            return res.status(400).json({ message: 'User is already activated' }); // 400: Bad Request
+        }
+
+        user.isActive = true;
+        await user.save();
+
+        return res.status(200).json({ message: 'User activated successfully' }); // 200: OK
+    } catch (error) {
+        console.error(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' }); // 500: Internal Server Error
+    }
+};
+
+module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile, deactivateUser, activateUser };

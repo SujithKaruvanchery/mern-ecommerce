@@ -3,14 +3,12 @@ const jwt = require('jsonwebtoken');
 const adminAuth = (req, res, next) => {
     try {
         const { admin_token } = req.cookies;
-        console.log("======= Cookies:", req.cookies);
 
         if (!admin_token) {
             return res.status(401).json({ error: 'Admin token not provided' });
         }
 
         const decoded = jwt.verify(admin_token, process.env.JWT_SECRET);
-        console.log("======= Decoded Token:", decoded);
 
         if (!decoded) {
             return res.status(401).json({ error: 'Invalid authentication token' });
