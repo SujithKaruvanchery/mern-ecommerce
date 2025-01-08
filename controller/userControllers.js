@@ -262,4 +262,22 @@ const activateUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile, deactivateUser, activateUser };
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await UserDB.findByIdAndDelete(id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found in the system.' }); // 404: Not Found
+        }
+
+        return res.status(200).json({ message: 'Successfully deleted the user account' }); // 200: OK
+
+    } catch (error) {
+        console.error(error);
+        return res.status(error.status || 500).json({ error: error.message || "Internal server error" }); // 500: Internal Server Error
+    }
+};
+
+
+module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile, deactivateUser, activateUser,deleteUser };
