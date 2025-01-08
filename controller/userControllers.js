@@ -1,4 +1,5 @@
 const UserDB = require('../model/userModel')
+const AdminDB = require('../model/adminModel')
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/token');
 
@@ -140,7 +141,6 @@ const checkUser = async (req, res) => {
 const updateUserProfile = async (req, res) => {
     try {
         const userId = req.user.id;
-        console.log(userId, "=======userid");
 
         const { name, email, mobile } = req.body;
 
@@ -167,7 +167,6 @@ const updateUserProfile = async (req, res) => {
 
         // Find the user from the database
         const user = await UserDB.findById(userId);
-        console.log("=======user", user);
 
         // If user doesn't exist
         if (!user) {
@@ -184,8 +183,6 @@ const updateUserProfile = async (req, res) => {
         if (email) user.email = email;
         if (mobile) user.mobile = mobile;
 
-        console.log({ name, email, mobile }, "=======user updates");
-
         // Save the updated user data
         await user.save();
 
@@ -201,5 +198,39 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
+const deactivateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log("=======userid", id);
 
-module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile };
+        const adminId = req.user.id;
+        console.log("=======adminid", adminId);
+
+        const user = await UserDB.findById(id);
+        console.log("=======user", user);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found in the system.' }); // 404: Not Found
+        }
+
+        const admin = await AdminDB.findById(adminId);
+        console.log("=======admin", admin);
+        if (!admin || admin.role !== "admin") {
+            return res.status(403).json({ message: 'Only admins can access this resource' }); // 403: Forbidden
+        }
+
+        if (!user.isActive) {
+            return res.status(400).json({ message: 'User is already deactivated' }); // 400: Bad Request
+        }
+
+        user.isActive = false;
+        await user.save();
+
+        return res.status(200).json({ message: 'User deactivated successfully' }); // 200: OK
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal Server Error' }); // 500: Internal Server Error
+    }
+};
+
+
+module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile,deactivateUser };
