@@ -30,7 +30,7 @@ const registerUser = async (req, res) => {
         });
 
         const savedUser = await newUser.save();
-        res.status(201).json({ message: 'Account created successfully.', data: savedUser }); // 201: Created
+        res.status(201).json({ message: 'Account created successfully.' }); // 201: Created
 
     } catch (error) {
         console.log(error);
@@ -66,7 +66,7 @@ const loginUser = async (req, res) => {
 
         res.cookie("user_token", token);
 
-        res.status(200).json({ message: 'Successfully logged in.', data: user }); // 200: OK
+        res.status(200).json({ message: 'Successfully logged in.' }); // 200: OK
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: error.message || 'Internal Server Error' }); // 500: Internal Server Error
@@ -87,7 +87,7 @@ const userProfile = async (req, res) => {
             return res.status(403).json({ error: 'The user account is inactive.' }); // 403: Forbidden
         }
 
-        res.status(200).json({ message: 'User profile loaded successfully', data: userData }); // 200: OK
+        res.status(200).json({ message: 'User profile loaded successfully' }); // 200: OK
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: error.message || 'Internal Server Error' }); // 500: Internal Server Error
@@ -190,7 +190,7 @@ const updateUserProfile = async (req, res) => {
         const updatedUser = await UserDB.findById(userId).select("-password");
 
         // Return the response
-        res.status(200).json({ message: 'User profile updated successfully', data: updatedUser }); // 200: OK
+        res.status(200).json({ message: 'User profile updated successfully' }); // 200: OK
 
     } catch (error) {
         console.log(error);
@@ -275,5 +275,4 @@ const deleteUser = async (req, res) => {
     }
 };
 
-
-module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile, deactivateUser, activateUser,deleteUser };
+module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile, deactivateUser, activateUser, deleteUser };
