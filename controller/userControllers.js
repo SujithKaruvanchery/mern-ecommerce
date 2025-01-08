@@ -137,5 +137,69 @@ const checkUser = async (req, res) => {
     }
 };
 
+const updateUserProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        console.log(userId, "=======userid");
 
-module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser };
+        const { name, email, mobile } = req.body;
+
+        // Check if at least one field is provided for the update
+        if (!name && !email && !mobile) {
+            return res.status(400).json({ error: "At least one field is required to update" }); // 400: Bad Request
+        }
+
+        // Check if email is provided and if it is unique
+        if (email) {
+            const existingUserWithEmail = await UserDB.findOne({ email });
+            if (existingUserWithEmail && existingUserWithEmail._id.toString() !== userId) {
+                return res.status(400).json({ error: 'This email is already registered.' }); // 400: Bad Request
+            }
+        }
+
+        // Check if mobile is provided and if it is unique
+        if (mobile) {
+            const existingUserWithMobile = await UserDB.findOne({ mobile });
+            if (existingUserWithMobile && existingUserWithMobile._id.toString() !== userId) {
+                return res.status(400).json({ error: 'This mobile number is already registered.' }); // 400: Bad Request
+            }
+        }
+
+        // Find the user from the database
+        const user = await UserDB.findById(userId);
+        console.log("=======user", user);
+
+        // If user doesn't exist
+        if (!user) {
+            return res.status(404).json({ error: 'User not found in the system.' }); // 404: Not Found
+        }
+
+        // If user is not active
+        if (!user.isActive) {
+            return res.status(403).json({ error: 'The user account is inactive.' }); // 403: Forbidden
+        }
+
+        // Update only the provided fields
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (mobile) user.mobile = mobile;
+
+        console.log({ name, email, mobile }, "=======user updates");
+
+        // Save the updated user data
+        await user.save();
+
+        // Fetch the updated user without the password field
+        const updatedUser = await UserDB.findById(userId).select("-password");
+
+        // Return the response
+        res.status(200).json({ message: 'User profile updated successfully', data: updatedUser }); // 200: OK
+
+    } catch (error) {
+        console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' }); // 500: Internal Server Error
+    }
+};
+
+
+module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile };
