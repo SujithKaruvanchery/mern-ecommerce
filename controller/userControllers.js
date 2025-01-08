@@ -93,4 +93,28 @@ const userProfile = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, userProfile };
+const logoutUser = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        console.log("=======userid", userId);
+        const user = await UserDB.findById(userId);
+        console.log("=======user", user);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found in the system.' }); // 404: Not Found
+        }
+
+        if (!user.isActive) {
+            return res.status(403).json({ error: 'The user account is inactive.' }); // 403: Forbidden
+        }
+
+        res.clearCookie("user_token");
+
+        res.status(200).json({ message: 'Successfully logged out user' }); // 200: OK
+    } catch (error) {
+        console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' }); // 500: Internal Server Error
+    }
+};
+
+module.exports = { registerUser, loginUser, userProfile,logoutUser };
