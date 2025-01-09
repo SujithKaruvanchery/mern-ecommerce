@@ -143,8 +143,59 @@ const checkAdmin = async (req, res) => {
     }
 };
 
+const updateAdminProfile = async (req, res) => {
+    try {
+        const adminId = req.user.id;
 
+        const { name, email, mobile } = req.body;
 
+        // Check if at least one field is provided for the update
+        if (!name && !email && !mobile) {
+            return res.status(400).json({ error: "At least one field is required to update" }); // 400: Bad Request
+        }
 
+        // Check if email is provided and if it is unique
+        if (email) {
+            const existingAdminWithEmail = await AdminDB.findOne({ email });
+            if (existingAdminWithEmail && existingAdminWithEmail._id.toString() !== adminId) {
+                return res.status(400).json({ error: 'This email is already registered.' }); // 400: Bad Request
+            }
+        }
 
-module.exports = {registerAdmin,loginAdmin,adminProfile,logoutAdmin,checkAdmin}
+        // Check if mobile is provided and if it is unique
+        if (mobile) {
+            const existingAdminWithMobile = await AdminDB.findOne({ mobile });
+            if (existingAdminWithMobile && existingAdminWithMobile._id.toString() !== adminId) {
+                return res.status(400).json({ error: 'This mobile number is already registered.' }); // 400: Bad Request
+            }
+        }
+
+        // Find the admin from the database
+        const admin = await AdminDB.findById(adminId);
+
+        // If admin doesn't exist
+        if (!admin) {
+            return res.status(404).json({ error: 'Admin not found in the system.' }); // 404: Not Found
+        }
+
+        // Update only the provided fields
+        if (name) admin.name = name;
+        if (email) admin.email = email;
+        if (mobile) admin.mobile = mobile;
+
+        // Save the updated admin data
+        await admin.save();
+
+        // Fetch the updated admin without the password field
+        const updatedAdmin = await AdminDB.findById(adminId).select("-password");
+
+        // Return the response
+        res.status(200).json({ message: 'Admin profile updated successfully', data: updatedAdmin }); // 200: OK
+
+    } catch (error) {
+        console.error(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' }); // 500: Internal Server Error
+    }
+};
+
+module.exports = {registerAdmin,loginAdmin,adminProfile,logoutAdmin,checkAdmin,updateAdminProfile}
