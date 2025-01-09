@@ -23,7 +23,6 @@ const registerSeller = async (req, res) => {
 
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        console.log(hashedPassword);
 
         const newSeller = new SellerDB({
             name, email, password: hashedPassword, mobile, role, storeName, address
@@ -94,6 +93,51 @@ const sellerProfile = async (req, res) => {
     }
 };
 
+const updateSellerProfile = async (req, res) => {
+    try {
+        const sellerId = req.user.id;
+        const { name, email, mobile, storeName, address } = req.body;
+
+        if (!name && !email && !mobile && !storeName && !address) {
+            return res.status(400).json({ error: 'At least one field is required to update' });
+        }
+
+        const seller = await SellerDB.findById(sellerId);
+
+        if (!seller) {
+            return res.status(404).json({ error: 'Seller not found in the system.' });
+        }
+
+        // Update only the provided fields
+        if (name) seller.name = name;
+        if (email) {
+            const existingSellerWithEmail = await SellerDB.findOne({ email });
+            if (existingSellerWithEmail && existingSellerWithEmail._id.toString() !== sellerId) {
+                return res.status(400).json({ error: 'This email is already registered.' });
+            }
+            seller.email = email;
+        }
+        if (mobile) {
+            const existingSellerWithMobile = await SellerDB.findOne({ mobile });
+            if (existingSellerWithMobile && existingSellerWithMobile._id.toString() !== sellerId) {
+                return res.status(400).json({ error: 'This mobile number is already registered.' });
+            }
+            seller.mobile = mobile;
+        }
+        if (storeName) seller.storeName = storeName;
+        if (address) seller.address = address;
+
+        await seller.save();
+
+        const updatedSeller = await SellerDB.findById(sellerId).select('-password');
+
+        res.status(200).json({ message: 'Seller profile updated successfully', data: updatedSeller });
+    } catch (error) {
+        console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
 
 
-module.exports = { registerSeller, loginSeller ,sellerProfile}
+
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile }
