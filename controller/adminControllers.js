@@ -122,7 +122,29 @@ const logoutAdmin = async (req, res) => {
     }
 };
 
+const checkAdmin = async (req, res) => {
+    try {
+        const adminId = req.user.id; // Assuming the `admin_token` contains the admin's `id`.
+
+        const admin = await AdminDB.findById(adminId);
+
+        if (!admin) {
+            return res.status(404).json({ error: 'Admin not found in the system.' }); // 404: Not Found
+        }
+
+        if (!admin.isActive) {
+            return res.status(403).json({ error: 'The admin account is inactive.' }); // 403: Forbidden
+        }
+
+        return res.status(200).json({ message: 'Admin authenticated successfully' }); // 200: OK
+    } catch (error) {
+        console.error(error);
+        return res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' }); // 500: Internal Server Error
+    }
+};
 
 
 
-module.exports = {registerAdmin,loginAdmin,adminProfile,logoutAdmin}
+
+
+module.exports = {registerAdmin,loginAdmin,adminProfile,logoutAdmin,checkAdmin}
