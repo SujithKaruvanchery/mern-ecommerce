@@ -138,6 +138,25 @@ const updateSellerProfile = async (req, res) => {
     }
 };
 
+const checkSeller = async (req, res) => {
+    try {
+        const sellerId = req.user.id;
 
+        const seller = await SellerDB.findById(sellerId);
 
-module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile }
+        if (!seller) {
+            return res.status(404).json({ error: 'Seller not found in the system.' });
+        }
+
+        if (!seller.isActive) {
+            return res.status(403).json({ error: 'The seller account is inactive.' });
+        }
+
+        return res.status(200).json({ message: 'Seller authenticated successfully', data: seller });
+    } catch (error) {
+        console.error(error);
+        return res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile,checkSeller }
