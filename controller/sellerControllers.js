@@ -159,4 +159,28 @@ const checkSeller = async (req, res) => {
     }
 };
 
-module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile,checkSeller }
+const logoutSeller = async (req, res) => {
+    try {
+        const sellerId = req.user.id;
+
+        const seller = await SellerDB.findById(sellerId);
+
+        if (!seller) {
+            return res.status(404).json({ error: 'Seller not found in the system.' });
+        }
+
+        if (!seller.isActive) {
+            return res.status(403).json({ error: 'The seller account is inactive.' });
+        }
+
+        res.clearCookie("seller_token");
+
+        res.status(200).json({ message: 'Successfully logged out seller', data: seller });
+    } catch (error) {
+        console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller }
