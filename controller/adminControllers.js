@@ -32,7 +32,7 @@ const registerAdmin = async (req, res) => {
 
         const savedAdmin = await newAdmin.save();
 
-        res.status(201).json({ message: 'Admin created successfully' });
+        res.status(201).json({ message: 'Admin created successfully', data: savedAdmin });
 
     } catch (error) {
         console.log(error);
@@ -115,7 +115,7 @@ const logoutAdmin = async (req, res) => {
 
         res.clearCookie("admin_token");
 
-        res.status(200).json({ message: 'Successfully logged out admin' });
+        res.status(200).json({ message: 'Successfully logged out admin', data: admin });
     } catch (error) {
         console.error(error);
         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
@@ -136,7 +136,7 @@ const checkAdmin = async (req, res) => {
             return res.status(403).json({ error: 'The admin account is inactive.' });
         }
 
-        return res.status(200).json({ message: 'Admin authenticated successfully' });
+        return res.status(200).json({ message: 'Admin authenticated successfully', data: admin });
     } catch (error) {
         console.error(error);
         return res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
