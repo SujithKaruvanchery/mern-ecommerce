@@ -73,6 +73,27 @@ const loginSeller = async (req, res) => {
     }
 };
 
+const sellerProfile = async (req, res) => {
+    try {
+        const sellerId = req.user.id;
+
+        const sellerData = await SellerDB.findById(sellerId).select('-password');
+
+        if (!sellerData) {
+            return res.status(404).json({ error: 'Seller not found in the system.' });
+        }
+
+        if (!sellerData.isActive) {
+            return res.status(403).json({ error: 'The seller account is inactive.' });
+        }
+
+        res.status(200).json({ message: 'Seller profile loaded successfully', data: sellerData });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
 
 
-module.exports = { registerSeller, loginSeller }
+
+module.exports = { registerSeller, loginSeller ,sellerProfile}

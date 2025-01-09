@@ -9,7 +9,6 @@ const sellerAuth = (req, res, next) => {
         }
 
         const decoded = jwt.verify(seller_token, process.env.JWT_SECRET);
-        console.log(decoded, "=======decoded token")
 
         if (!decoded || decoded.role !== "seller") {
             return res.status(401).json({ error: 'Seller is not authorized' });
