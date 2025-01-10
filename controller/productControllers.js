@@ -1,22 +1,23 @@
 const ProductDB = require('../model/productModel');
+const { cloudinaryInstance } = require("../config/cloudinaryConfig");
 
 const getAllProducts = async (req, res) => {
     try {
         const products = await ProductDB.find();
 
         if (!products || products.length === 0) {
-            return res.status(404).json({ message: 'No products found in the database' });
+            return res.json({ message: 'No products found in the database' });
         }
 
-        res.status(200).json({
-            message: 'Products fetched successfully', data: products
+        res.json({
+            message: 'Products fetched successfully',
+            data: products
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: error.message || 'Internal Server Error' });
+        return res.json({ error: error.message || 'Internal Server Error' });
     }
 };
-
 
 const getProductById = async (req, res) => {
     try {
@@ -37,5 +38,25 @@ const getProductById = async (req, res) => {
     }
 };
 
+const createProduct = async (req, res) => {
+    try {
+        const { title, description, price, image, stockQuantity } = req.body;
+        const { id } = req.user;
 
-module.exports = { getAllProducts, getProductById };
+        if (!title || !description || !price || !stockQuantity) {
+            return res.status(400).json({ message: 'All fields must be filled out.' });
+        }
+
+        const uploadResult = await cloudinaryInstance.uploader.upload(req.file.path);
+
+        const savedProduct = new ProductDB({ title, description, price, stockQuantity, image: uploadResult.url, seller: id });
+        await savedProduct.save();
+
+        res.status(200).json({ message: 'Product created successfully', data: savedProduct });
+    } catch (error) {
+        console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+module.exports = { getAllProducts, getProductById, createProduct };

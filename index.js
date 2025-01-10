@@ -6,10 +6,19 @@ const cookieParser = require('cookie-parser')
 
 
 const app = express()
+
 connectDB()
+
 app.use(express.json())
+
 app.use(cookieParser())
+
 app.use('/api', apiRouter)
+
+app.all("*", (req, res) => {
+    return res.status(404).json({ message: "Route not found" });
+});
+
 
 app.listen(process.env.PORT, (error) => {
     if (error) {
