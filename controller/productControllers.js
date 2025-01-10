@@ -75,4 +75,20 @@ const updateProduct = async (req, res) => {
     }
 };
 
-module.exports = { getAllProducts, getProductById, createProduct,updateProduct };
+const deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const deletedProduct = await ProductDB.findByIdAndDelete(productId);
+
+        if (!deletedProduct) {
+            return res.status(404).json({ message: 'No products found in the database' });
+        }
+
+        res.status(200).json({ message: 'Product deleted successfully', data: deletedProduct });
+    } catch (error) {
+        console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct };
