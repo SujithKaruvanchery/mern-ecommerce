@@ -176,7 +176,7 @@ const logoutSeller = async (req, res) => {
             return res.status(403).json({ error: 'The seller account is inactive.' });
         }
 
-        res.clearCookie("seller_token");
+        res.clearCookie('seller_token');
 
         res.status(200).json({ message: 'Successfully logged out seller', data: seller });
     } catch (error) {
