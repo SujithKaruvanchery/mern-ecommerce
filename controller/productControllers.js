@@ -91,4 +91,18 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct };
+const productCategory = async (req, res) => {
+    try {
+        const { category } = req.params
+
+        const productsCategory = await ProductDB.find({ category })
+
+        res.status(200).json({ message: 'Product fetched successfully', data: productsCategory });
+
+    } catch (error) {
+        console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+}
+
+module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory };

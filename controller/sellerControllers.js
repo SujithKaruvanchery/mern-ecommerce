@@ -112,7 +112,6 @@ const updateSellerProfile = async (req, res) => {
             return res.status(404).json({ error: 'Seller not found in the system.' });
         }
 
-        // Update only the provided fields
         if (name) seller.name = name;
         if (email) {
             const existingSellerWithEmail = await SellerDB.findOne({ email });
