@@ -65,7 +65,11 @@ const loginSeller = async (req, res) => {
 
         res.cookie("seller_token", token);
 
-        res.status(200).json({ message: 'Successfully logged in.', data: seller });
+        {
+            const { password, ...sellerWithoutPassword } = seller._doc
+            res.status(200).json({ message: 'Successfully logged in.', data: sellerWithoutPassword });
+        }
+
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: error.message || 'Internal Server Error' });

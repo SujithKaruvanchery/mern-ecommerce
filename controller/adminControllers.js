@@ -68,7 +68,11 @@ const loginAdmin = async (req, res) => {
 
         res.cookie("admin_token", token);
 
-        res.status(200).json({ message: 'Successfully logged in.', data: admin });
+        {
+            const { password, ...adminWithoutPassword } = admin._doc
+            res.status(200).json({ message: 'Successfully logged in.', data: adminWithoutPassword });
+        }
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message || 'Internal Server Error' });

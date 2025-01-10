@@ -10,5 +10,4 @@ const generateToken = (user, role) => {
     }
 }
 
-
 module.exports = { generateToken }
