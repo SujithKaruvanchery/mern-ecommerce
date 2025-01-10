@@ -26,7 +26,7 @@ const getProductById = async (req, res) => {
         const product = await ProductDB.findById(productId).populate('seller');
 
         if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
+            return res.status(404).json({ message: 'No products found in the database' });
         }
 
         res.status(200).json({
@@ -59,4 +59,20 @@ const createProduct = async (req, res) => {
     }
 };
 
-module.exports = { getAllProducts, getProductById, createProduct };
+const updateProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const updatedProduct = await ProductDB.findByIdAndUpdate(productId, req.body, { new: true });
+
+        if (!updatedProduct) {
+            return res.status(404).json({ message: 'Product not found in the system' });
+        }
+
+        res.status(200).json({ message: 'Product updated successfully', data: updatedProduct });
+    } catch (error) {
+        console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+module.exports = { getAllProducts, getProductById, createProduct,updateProduct };
