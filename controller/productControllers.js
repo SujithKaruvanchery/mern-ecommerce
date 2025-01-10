@@ -105,4 +105,21 @@ const productCategory = async (req, res) => {
     }
 }
 
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory };
+const productNewArrival = async (req, res) => {
+    try {
+
+        const newArrivalProduct = await ProductDB.find({ isNewArrival: true });
+
+        if (!newArrivalProduct || newArrivalProduct.length === 0) {
+            return res.status(404).json({ message: 'No new arrivals found' });
+        }
+
+        res.status(200).json({ message: 'New arrival products fetched successfully', data: newArrivalProduct });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message || "Internal Server Error" });
+    }
+};
+
+module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory, productNewArrival };
