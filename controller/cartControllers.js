@@ -92,10 +92,31 @@ const removeProductFromCart = async (req, res) => {
         res.status(200).json({ message: 'Product removed from the cart successfully', data: cart });
     } catch (error) {
         console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+const clearCart = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        console.log('=======userid', userId);
+
+        const cart = await CartDB.findOne({ userId });
+        console.log('=======cart', cart);
+
+        if (!cart) {
+            return res.status(404).json({ message: 'Cart not found for the user' });
+        }
+
+        cart.products = [];
+        cart.calculateTotalPrice();
+        await cart.save();
+
+        res.status(200).json({ message: 'Your cart has been cleared successfully', data: cart });
+    } catch (error) {
+        console.log(error);
         res.status(error.status || 500).json({ error: error.message || 'Something went wrong on the server' });
     }
 };
 
-
-
-module.exports = {getCart,addProductToCart,removeProductFromCart}
+module.exports = { getCart, addProductToCart, removeProductFromCart,clearCart }
