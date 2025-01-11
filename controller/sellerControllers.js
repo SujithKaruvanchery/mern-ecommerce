@@ -202,6 +202,14 @@ const deleteSeller = async (req, res) => {
     }
 };
 
+const getAllSellers = async (req, res) => {
+    try {
+        const users = await SellerDB.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve users', error });
+    }
+};
 
 
-module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller }
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller,getAllSellers }
