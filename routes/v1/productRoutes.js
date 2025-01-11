@@ -12,5 +12,4 @@ productRouter.delete('/delete-product/:id', deleteProduct)
 productRouter.get('/products/:category', productCategory)
 productRouter.get('/new-arrivals', productNewArrival);
 
-
 module.exports = productRouter

@@ -112,7 +112,7 @@ const logoutUser = async (req, res) => {
             return res.status(403).json({ error: 'The user account is inactive.' });
         }
 
-        res.clearCookie("user_token");
+        res.clearCookie('user_token');
 
         res.status(200).json({ message: 'Successfully logged out user', data: user });
     } catch (error) {
@@ -149,7 +149,7 @@ const updateUserProfile = async (req, res) => {
         const { name, email, mobile } = req.body;
 
         if (!name && !email && !mobile) {
-            return res.status(400).json({ error: "At least one field is required to update" });
+            return res.status(400).json({ error: 'At least one field is required to update' });
         }
 
         if (email) {
@@ -269,4 +269,13 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile, deactivateUser, activateUser, deleteUser };
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await UserDB.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve users', error });
+    }
+};
+
+module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile, deactivateUser, activateUser, deleteUser,getAllUsers };
