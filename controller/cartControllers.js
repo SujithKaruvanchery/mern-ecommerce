@@ -64,5 +64,38 @@ const addProductToCart = async (req, res) => {
     }
 };
 
+const removeProductFromCart = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        console.log('=======userid', userId);
+        const { productId } = req.body;
+        console.log('=======productid', productId);
 
-module.exports = {getCart,addProductToCart}
+        const cart = await CartDB.findOne({ userId });
+        console.log('=======cart', cart);
+
+        if (!cart) {
+            return res.status(404).json({ message: 'Cart not found for the user' });
+        }
+
+        const productExists = cart.products.some((item) => item.productId.equals(productId));
+        if (!productExists) {
+            return res.status(404).json({ message: 'Product not found in the cart' });
+        }
+
+        cart.products = cart.products.filter((item) => !item.productId.equals(productId));
+
+        cart.calculateTotalPrice();
+
+        await cart.save();
+
+        res.status(200).json({ message: 'Product removed from the cart successfully', data: cart });
+    } catch (error) {
+        console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Something went wrong on the server' });
+    }
+};
+
+
+
+module.exports = {getCart,addProductToCart,removeProductFromCart}
