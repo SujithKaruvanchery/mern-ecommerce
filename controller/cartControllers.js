@@ -141,5 +141,4 @@ const updateCart = async (req, res) => {
     }
 };
 
-
 module.exports = { getCart, addProductToCart, removeProductFromCart, clearCart, updateCart }

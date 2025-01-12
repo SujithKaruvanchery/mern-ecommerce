@@ -265,7 +265,7 @@ const deleteUser = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        return res.status(error.status || 500).json({ error: error.message || "Internal server error" });
+        return res.status(error.status || 500).json({ error: error.message || 'Internal server error' });
     }
 };
 
