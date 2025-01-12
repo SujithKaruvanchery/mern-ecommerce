@@ -71,6 +71,23 @@ const deleteReview = async (req, res) => {
     }
 };
 
+const getAverageRating = async (req, res) => {
+    try {
+        const { productId } = req.params;
 
+        const reviews = await ReviewDB.find({ productId });
 
-module.exports = { getProductReview, addReview , deleteReview}
+        if (!reviews.length) {
+            return res.status(404).json({ message: 'No reviews found for this product' });
+        }
+
+        const averageRating = reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+
+        res.status(200).json({ message: 'Product average rating fetched successfully', data: averageRating });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+module.exports = { getProductReview, addReview, deleteReview,getAverageRating }
