@@ -29,14 +29,12 @@ const cartSchema = new mongoose.Schema({
         required: true,
         default: 0,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
 }, { timestamps: true });
 
 cartSchema.methods.calculateTotalPrice = function () {
-    this.totalPrice = this.products.reduce((total, product) => total + product.price, 0)
-}
+    this.totalPrice = this.products.reduce((total, product) => {
+        return total + (product.price * product.quantity);
+    }, 0);
+};
 
-module.exports = new mongoose.model("Cart", cartSchema)
+module.exports = mongoose.model("Cart", cartSchema);
