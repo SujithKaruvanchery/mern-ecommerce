@@ -49,5 +49,28 @@ const addReview = async (req, res) => {
     }
 };
 
+const deleteReview = async (req, res) => {
+    try {
+        const { reviewId } = req.params;
+        console.log('=======reviewId', reviewId);
 
-module.exports = { getProductReview, addReview }
+        const userId = req.user.id;
+        console.log('=======userId', userId);
+
+        const review = await ReviewDB.findOneAndDelete({ _id: reviewId, userId });
+        console.log('=======review', review);
+
+        if (!review) {
+            return res.status(404).json({ message: 'Review not found or you are not authorized to delete' });
+        }
+
+        res.status(200).json({ message: 'Review deleted successfully', data: review });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+
+
+module.exports = { getProductReview, addReview , deleteReview}
