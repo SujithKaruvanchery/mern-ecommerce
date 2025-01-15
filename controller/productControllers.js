@@ -40,16 +40,26 @@ const getProductById = async (req, res) => {
 
 const createProduct = async (req, res) => {
     try {
-        const { title, description, price, image, stockQuantity } = req.body;
+        const { title, description, price, image, stockQuantity, category, isNewArrival } = req.body;
         const { id } = req.user;
 
-        if (!title || !description || !price || !stockQuantity) {
-            return res.status(400).json({ message: 'All fields must be filled out.' });
+        if (!title || !description || !price || !stockQuantity || !category) {
+            return res.status(400).json({ message: 'All fields must be filled out, including category.' });
         }
 
         const uploadResult = await cloudinaryInstance.uploader.upload(req.file.path);
 
-        const savedProduct = new ProductDB({ title, description, price, stockQuantity, image: uploadResult.url, seller: id });
+        const savedProduct = new ProductDB({
+            title,
+            description,
+            price,
+            stockQuantity,
+            image: uploadResult.url,
+            seller: id,
+            category,
+            isNewArrival
+        });
+
         await savedProduct.save();
 
         res.status(200).json({ message: 'Product created successfully', data: savedProduct });
@@ -58,6 +68,7 @@ const createProduct = async (req, res) => {
         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
     }
 };
+
 
 const updateProduct = async (req, res) => {
     try {

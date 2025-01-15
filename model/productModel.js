@@ -41,7 +41,16 @@ const productSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    seller: { type: mongoose.Types.ObjectId, ref: "Seller" }
-}, { timestamps: true })
+    seller: { type: mongoose.Types.ObjectId, ref: "Seller" },
+    category: {
+        type: String,
+        enum: ['men', 'women', 'kids'],
+        required: true
+    },
+    isNewArrival: {
+        type: Boolean,
+        default: false,
+    }
+}, { timestamps: true });
 
-module.exports = new mongoose.model("Products", productSchema)
+module.exports = new mongoose.model("Products", productSchema);
