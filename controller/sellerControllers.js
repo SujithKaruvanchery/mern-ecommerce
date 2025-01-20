@@ -4,8 +4,8 @@ const { generateToken } = require('../utils/token')
 
 const registerSeller = async (req, res) => {
     try {
-        const { name, email, mobile, password, role, storeName, address } = req.body;
-        if (!name || !email || !mobile || !password || !role || !storeName || !address) {
+        const { name, email, mobile, password, storeName, address } = req.body;
+        if (!name || !email || !mobile || !password || !storeName || !address) {
             return res.status(400).json({ error: 'All fields must be filled out.' });
         }
 
@@ -25,7 +25,7 @@ const registerSeller = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newSeller = new SellerDB({
-            name, email, password: hashedPassword, mobile, role, storeName, address
+            name, email, password: hashedPassword, mobile, storeName, address
         });
 
         const savedSeller = await newSeller.save();
@@ -89,7 +89,6 @@ const sellerProfile = async (req, res) => {
         if (!sellerData.isActive) {
             return res.status(403).json({ error: 'The seller account is inactive.' });
         }
-
         res.status(200).json({ message: 'Seller profile loaded successfully', data: sellerData });
     } catch (error) {
         console.error(error);
@@ -212,4 +211,4 @@ const getAllSellers = async (req, res) => {
 };
 
 
-module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller,getAllSellers }
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers }
