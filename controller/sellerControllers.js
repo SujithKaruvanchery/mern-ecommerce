@@ -210,5 +210,4 @@ const getAllSellers = async (req, res) => {
     }
 };
 
-
 module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers }

@@ -1,6 +1,8 @@
 const AdminDB = require('../model/adminModel')
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/token')
+const crypto = require('crypto');
+const nodemailer = require('nodemailer')
 
 const registerAdmin = async (req, res) => {
     try {
@@ -193,4 +195,79 @@ const updateAdminProfile = async (req, res) => {
     }
 };
 
-module.exports = { registerAdmin, loginAdmin, adminProfile, logoutAdmin, checkAdmin, updateAdminProfile }
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const admin = await AdminDB.findOne({ email });
+        if (!admin) {
+            return res.status(404).json({ error: 'Admin not found with this email' });
+        }
+
+        const resetToken = crypto.randomBytes(20).toString('hex');
+        admin.resetPasswordToken = resetToken;
+        admin.resetPasswordExpires = Date.now() + 3600000;
+        await admin.save();
+
+        const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+        });
+
+        const mailOptions = {
+            to: email,
+            subject: 'Password Reset Request',
+            html: `Click <a href=${resetUrl}>here</a> to change your password.`,
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'We have sent a link to your email to reset the password.' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    console.log('Password:', password);
+
+    try {
+        const admin = await AdminDB.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+
+        if (!admin) {
+            return res.status(400).json({ error: 'Invalid or expired token' });
+        }
+
+        if (!password || password.trim() === '') {
+            return res.status(400).json({ error: 'Password is required' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        console.log('Generated Salt:', salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        admin.password = hashedPassword;
+        admin.resetPasswordToken = undefined;
+        admin.resetPasswordExpires = undefined;
+
+        await admin.save();
+
+        res.status(200).json({ message: 'Your password has been successfully updated.' });
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+module.exports = { registerAdmin, loginAdmin, adminProfile, logoutAdmin, checkAdmin, updateAdminProfile, forgotPassword, resetPassword }
