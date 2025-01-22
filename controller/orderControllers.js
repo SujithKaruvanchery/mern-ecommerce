@@ -47,6 +47,36 @@ const getAllOrdersBySeller = async (req, res) => {
     }
 };
 
+const updateOrderStatus = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { status } = req.body;
+
+        if (!['Order Received',
+            'Shipping Progress',
+            'Out for Dispatch',
+            'Delivered Successfully'].includes(status)) {
+            return res.status(400).json({ message: 'The provided status is not valid' });
+        }
+
+        const updatedOrder = await OrderDB.findByIdAndUpdate(
+            orderId,
+            { orderStatus: status },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ message: 'Order with the given ID does not exist' });
+        }
+
+        res.status(200).json({ message: 'The order status has been successfully updated', order: updatedOrder });
+    } catch (error) {
+        console.log(error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
 
 
-module.exports = { getOrdersByUserId, getAllOrders, getAllOrdersBySeller }
+
+
+module.exports = { getOrdersByUserId, getAllOrders, getAllOrdersBySeller,updateOrderStatus }
