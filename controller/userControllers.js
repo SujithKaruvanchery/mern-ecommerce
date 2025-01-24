@@ -1,7 +1,9 @@
-const UserDB = require('../model/userModel')
 const AdminDB = require('../model/adminModel')
+const UserDB = require('../model/userModel')
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/token');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 const registerUser = async (req, res) => {
     try {
@@ -278,4 +280,81 @@ const getAllUsers = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile, deactivateUser, activateUser, deleteUser,getAllUsers };
+const forgotPassword = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(422).json({ error: 'Email is required.' });
+    }
+
+    try {
+        const user = await UserDB.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ error: 'No user found with this email.' });
+        }
+
+        const resetToken = crypto.randomBytes(20).toString('hex');
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = Date.now() + 3600000;
+        await user.save();
+
+        const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+        });
+
+        const mailOptions = {
+            to: email,
+            subject: 'Password Reset Request',
+            html: `Click <a href="${resetUrl}">here</a> to reset your password. The link expires in 1 hour.`,
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'A password reset link has been sent to your email.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    try {
+        const user = await UserDB.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.status(400).json({ error: 'Invalid or expired token' });
+        }
+
+        if (!password || password.trim() === '') {
+            return res.status(400).json({ error: 'Password is required' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        user.password = hashedPassword;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        await user.save();
+        res.status(200).json({ message: 'Your password has been successfully updated.' });
+
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile, deactivateUser, activateUser, deleteUser, getAllUsers, forgotPassword, resetPassword };

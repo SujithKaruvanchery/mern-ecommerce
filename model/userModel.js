@@ -33,12 +33,14 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
         type: String,
         trim: true,
-        default: "https://www.vecteezy.com/vector-art/30504836-avatar-account-flat-vector-isolated-on-transparent-background-for-graphic-and-web-design-default-social-media-profile-photo-symbol-profile-and-people-silhouette-user-icon"
+        default: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT15m1zlN0XxCPpn4e7Z4n5HzVz4IhKDjTCbi9PVaO_yIXGXRLrxgLdx51HyxOz8XTLNwYqtwm_QLBD_HXlPcZquw"
     },
     isActive: {
         type: Boolean,
         default: true
-    }
+    },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
 
 }, { timestamps: true });
 
