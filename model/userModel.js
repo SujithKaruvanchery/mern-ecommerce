@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
         type: String,
         trim: true,
-        default: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcT15m1zlN0XxCPpn4e7Z4n5HzVz4IhKDjTCbi9PVaO_yIXGXRLrxgLdx51HyxOz8XTLNwYqtwm_QLBD_HXlPcZquw"
+        default: "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
     },
     isActive: {
         type: Boolean,

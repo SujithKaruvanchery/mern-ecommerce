@@ -195,6 +195,23 @@ const updateAdminProfile = async (req, res) => {
     }
 };
 
+const deleteAdmin = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const admin = await AdminDB.findByIdAndDelete(id);
+
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found in the system.' });
+        }
+
+        return res.status(200).json({ message: 'Successfully deleted the admin account', data: admin });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
 const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
@@ -270,4 +287,4 @@ const resetPassword = async (req, res) => {
     }
 };
 
-module.exports = { registerAdmin, loginAdmin, adminProfile, logoutAdmin, checkAdmin, updateAdminProfile, forgotPassword, resetPassword }
+module.exports = { registerAdmin, loginAdmin, adminProfile, logoutAdmin, checkAdmin, updateAdminProfile, forgotPassword, resetPassword,deleteAdmin }
