@@ -1,6 +1,8 @@
 const SellerDB = require('../model/sellerModel')
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/token')
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
 const registerSeller = async (req, res) => {
     try {
@@ -210,4 +212,47 @@ const getAllSellers = async (req, res) => {
     }
 };
 
-module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers }
+const forgotPasswordSeller = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(422).json({ error: "Email is required." });
+    }
+
+    try {
+        const seller = await SellerDB.findOne({ email });
+
+        if (!seller) {
+            return res.status(404).json({ error: "No seller found with this email." });
+        }
+
+        const resetToken = crypto.randomBytes(20).toString("hex");
+        seller.resetPasswordToken = resetToken;
+        seller.resetPasswordExpires = Date.now() + 3600000;
+        await seller.save();
+
+        const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+        });
+
+        const mailOptions = {
+            to: email,
+            subject: "Password Reset Request",
+            html: `Click <a href="${resetUrl}">here</a> to reset your password. The link expires in 1 hour.`,
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: "A password reset link has been sent to your email." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers,forgotPasswordSeller }
