@@ -57,7 +57,9 @@ const sellerSchema = new mongoose.Schema({
     },
     products: [{
         type: mongoose.Types.ObjectId, ref: "Products"
-    }]
+    }],
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
 
 }, { timestamps: true });
 

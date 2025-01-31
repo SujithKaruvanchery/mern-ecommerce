@@ -255,4 +255,37 @@ const forgotPasswordSeller = async (req, res) => {
     }
 };
 
-module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers,forgotPasswordSeller }
+const resetPasswordSeller = async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    try {
+        const seller = await SellerDB.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() },
+        });
+
+        if (!seller) {
+            return res.status(400).json({ error: "Invalid or expired token" });
+        }
+
+        if (!password || password.trim() === "") {
+            return res.status(400).json({ error: "Password is required" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        seller.password = hashedPassword;
+        seller.resetPasswordToken = undefined;
+        seller.resetPasswordExpires = undefined;
+
+        await seller.save();
+        res.status(200).json({ message: "Your password has been successfully updated." });
+
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers,forgotPasswordSeller,resetPasswordSeller }
