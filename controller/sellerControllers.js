@@ -231,7 +231,7 @@ const forgotPasswordSeller = async (req, res) => {
         seller.resetPasswordExpires = Date.now() + 3600000;
         await seller.save();
 
-        const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+        const resetUrl = `${process.env.FRONTEND_URL}/seller/reset-password/${resetToken}`;
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -288,4 +288,4 @@ const resetPasswordSeller = async (req, res) => {
     }
 };
 
-module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers,forgotPasswordSeller,resetPasswordSeller }
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers, forgotPasswordSeller, resetPasswordSeller }
