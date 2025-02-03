@@ -1,24 +1,45 @@
 const OrderDB = require('../model/orderModel')
 
+// const getOrdersByUserId = async (req, res) => {
+//     try {
+//         const id = req.user.id;
+//         console.log('Retrieving orders for user ID:', id);
+
+//         const orders = await OrderDB.find({ id })
+//             .populate('items.productId', 'title price image')
+//             .exec();
+
+//         console.log('Successfully retrieved orders:', orders);
+//         res.status(200).json({
+//             message: 'Orders successfully retrieved',
+//             data: orders,
+//         });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
+
 const getOrdersByUserId = async (req, res) => {
     try {
         const id = req.user.id;
-        console.log('Retrieving orders for user ID:', id);
+        console.log("User ID from token:", id);
 
-        const orders = await OrderDB.find({ id })
-            .populate('items.productId', 'title price image')
+        const orders = await OrderDB.find({ userId: id })
+            .populate("items.productId", "title price image")
             .exec();
 
-        console.log('Successfully retrieved orders:', orders);
+        console.log("Retrieved orders:", orders);
         res.status(200).json({
-            message: 'Orders successfully retrieved',
+            message: "Orders successfully retrieved",
             data: orders,
         });
     } catch (error) {
-        console.log(error);
-        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+        console.error(error);
+        res.status(500).json({ error: error.message || "Internal Server Error" });
     }
 };
+
 
 const getAllOrders = async (req, res) => {
     try {
