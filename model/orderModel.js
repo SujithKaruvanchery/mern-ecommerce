@@ -82,15 +82,15 @@ const orderSchema = new mongoose.Schema(
     },
     verifiedByAdmin: {
       type: Boolean,
-      default: false, // Order is not verified initially
+      default: false,
     },
     adminVerifiedAt: {
       type: Date,
-      default: null, // Will be set when admin verifies
+      default: null,
     },
     orderPlaced: {
       type: Boolean,
-      default: false, // Order is not placed until verification
+      default: false,
     }
   },
   { timestamps: true }

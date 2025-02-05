@@ -127,41 +127,38 @@ const verifyOrderByAdmin = async (req, res) => {
     }
 };
 
-// const placeOrderAfterVerification = async (req, res) => {
-//     try {
-//         const { orderId } = req.params;
+const placeOrderAfterVerification = async (req, res) => {
+    try {
+        const { orderId } = req.params;
 
-//         const order = await OrderDB.findById(orderId);
+        const order = await OrderDB.findById(orderId);
 
-//         if (!order) {
-//             return res.status(404).json({ message: "Order not found" });
-//         }
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
 
-//         // Ensure order is verified before placing
-//         if (!order.verifiedByAdmin) {
-//             return res.status(400).json({ message: "Order must be verified by admin before placing" });
-//         }
+        if (!order.verifiedByAdmin) {
+            return res.status(400).json({ message: "Order must be verified by admin before placing" });
+        }
 
-//         // Ensure order is not already placed
-//         if (order.orderPlaced) {
-//             return res.status(400).json({ message: "Order is already placed" });
-//         }
+        if (order.orderPlaced) {
+            return res.status(400).json({ message: "Order is already placed" });
+        }
 
-//         // Mark order as placed
-//         order.orderPlaced = true;
-//         order.orderStatus = "Placed";
+        order.orderPlaced = true;
+        order.orderStatus = "Placed";
 
-//         await order.save();
+        await order.save();
 
-//         res.status(200).json({
-//             message: "Order successfully placed after admin verification",
-//             order,
-//         });
-//     } catch (error) {
-//         console.error("Error placing order:", error);
-//         res.status(error.status || 500).json({ error: error.message || "Internal Server Error" });
-//     }
-// };
+        res.status(200).json({
+            message: "Order successfully placed after admin verification",
+            order,
+        });
+    } catch (error) {
+        console.error("Error placing order:", error);
+        res.status(error.status || 500).json({ error: error.message || "Internal Server Error" });
+    }
+};
 
 
-module.exports = { getOrdersByUserId, getAllOrders, getAllOrdersBySeller,updateOrderStatus,verifyOrderByAdmin }
+module.exports = { getOrdersByUserId, getAllOrders, getAllOrdersBySeller,updateOrderStatus,verifyOrderByAdmin,placeOrderAfterVerification }
