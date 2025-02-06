@@ -50,12 +50,63 @@ const getProductReview = async (req, res) => {
 //     }
 // };
 
-const addReview = async (req, res) => {
+// const addReview = async (req, res) => {
+//     try {
+//         const { productId, rating, comment } = req.body;
+//         const userId = req.user.id;
+
+//         console.log('Request body:', req.body); 
+//         console.log('User ID:', userId);
+
+//         const product = await ProductDB.findById(productId);
+
+//         if (!product) {
+//             console.log('Product not found:', productId);
+//             return res.status(404).json({ message: 'No products found in the database' });
+//         }
+
+//         console.log('Product found:', product);
+
+//         if (rating > 5 || rating < 1) {
+//             console.log('Invalid rating:', rating);
+//             return res.status(400).json({ message: 'Please provide a valid rating between 1 and 5' });
+//         }
+
+//         const order = await OrderDB.findOne({
+//             userId,
+//             "items.productId": productId,
+//             orderStatus: "Delivered Successfully",
+//         });
+
+//         console.log('Order:', order);
+//         console.log('User Order Check:', order);
+
+//         if (!order) {
+//             console.log('Order not found or not delivered:', order);
+//             return res.status(400).json({ message: 'You must have received the product to leave a review' });
+//         }
+
+//         const review = await ReviewDB.findOneAndUpdate(
+//             { userId, productId },
+//             { rating, comment },
+//             { new: true, upsert: true }
+//         );
+
+//         console.log('Review:', review);
+
+//         res.status(201).json({ message: 'Review added successfully', data: review });
+//     } catch (error) {
+//         console.error('Error:', error);
+//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
+
+const addOrUpdateReview = async (req, res) => {
     try {
         const { productId, rating, comment } = req.body;
         const userId = req.user.id;
 
-        console.log('Request body:', req.body); 
+        console.log('Request body:', req.body);
         console.log('User ID:', userId);
 
         const product = await ProductDB.findById(productId);
@@ -79,27 +130,37 @@ const addReview = async (req, res) => {
         });
 
         console.log('Order:', order);
-        console.log('User Order Check:', order);
 
         if (!order) {
             console.log('Order not found or not delivered:', order);
             return res.status(400).json({ message: 'You must have received the product to leave a review' });
         }
 
-        const review = await ReviewDB.findOneAndUpdate(
-            { userId, productId },
-            { rating, comment },
-            { new: true, upsert: true }
-        );
+        const existingReview = await ReviewDB.findOne({ userId, productId });
 
-        console.log('Review:', review);
-
-        res.status(201).json({ message: 'Review added successfully', data: review });
+        if (existingReview) {
+            existingReview.rating = rating;
+            existingReview.comment = comment;
+            await existingReview.save();
+            console.log('Review updated:', existingReview);
+            return res.status(200).json({ message: 'Review updated successfully', data: existingReview });
+        } else {
+            const newReview = new ReviewDB({
+                userId,
+                productId,
+                rating,
+                comment,
+            });
+            await newReview.save();
+            console.log('Review created:', newReview);
+            return res.status(201).json({ message: 'Review added successfully', data: newReview });
+        }
     } catch (error) {
         console.error('Error:', error);
         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
     }
 };
+
 
 const deleteReview = async (req, res) => {
     try {
@@ -142,4 +203,4 @@ const getAverageRating = async (req, res) => {
     }
 };
 
-module.exports = { getProductReview, addReview, deleteReview,getAverageRating }
+module.exports = { getProductReview, addOrUpdateReview, deleteReview,getAverageRating }
