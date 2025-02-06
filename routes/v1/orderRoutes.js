@@ -12,5 +12,4 @@ orderRouter.put('/orders/:orderId/status', sellerAuth, updateOrderStatus)
 orderRouter.put("/admin/verify-order/:orderId", adminAuth, verifyOrderByAdmin);
 orderRouter.put("/admin/place-order/:orderId", adminAuth, placeOrderAfterVerification);
 
-
 module.exports = orderRouter;

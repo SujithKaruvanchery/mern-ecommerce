@@ -1,5 +1,6 @@
 const ProductDB = require('../model/productModel')
 const ReviewDB = require('../model/reviewModel')
+const OrderDB = require('../model/orderModel')
 
 const getProductReview = async (req, res) => {
     try {
@@ -18,21 +19,71 @@ const getProductReview = async (req, res) => {
     }
 };
 
+// const addReview = async (req, res) => {
+//     try {
+//         const { productId, rating, comment } = req.body;
+//         const userId = req.user.id;
+//         console.log('=======userId', userId);
+
+//         const product = await ProductDB.findById(productId);
+//         console.log('=======product', product);
+
+//         if (!product) {
+//             return res.status(404).json({ message: 'No products found in the database' });
+//         }
+
+//         if (rating > 5 || rating < 1) {
+//             return res.status(400).json({ message: 'Please provide a valid rating between 1 and 5' });
+//         }
+
+//         const review = await ReviewDB.findOneAndUpdate(
+//             { userId, productId },
+//             { rating, comment },
+//             { new: true, upsert: true }
+//         );
+//         console.log('=======review', review);
+
+//         res.status(201).json({ message: 'Review added successfully', data: review });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
+
 const addReview = async (req, res) => {
     try {
         const { productId, rating, comment } = req.body;
         const userId = req.user.id;
-        console.log('=======userId', userId);
+
+        console.log('Request body:', req.body); 
+        console.log('User ID:', userId);
 
         const product = await ProductDB.findById(productId);
-        console.log('=======product', product);
 
         if (!product) {
+            console.log('Product not found:', productId);
             return res.status(404).json({ message: 'No products found in the database' });
         }
 
+        console.log('Product found:', product);
+
         if (rating > 5 || rating < 1) {
+            console.log('Invalid rating:', rating);
             return res.status(400).json({ message: 'Please provide a valid rating between 1 and 5' });
+        }
+
+        const order = await OrderDB.findOne({
+            userId,
+            "items.productId": productId,
+            orderStatus: "Delivered Successfully",
+        });
+
+        console.log('Order:', order);
+        console.log('User Order Check:', order);
+
+        if (!order) {
+            console.log('Order not found or not delivered:', order);
+            return res.status(400).json({ message: 'You must have received the product to leave a review' });
         }
 
         const review = await ReviewDB.findOneAndUpdate(
@@ -40,11 +91,12 @@ const addReview = async (req, res) => {
             { rating, comment },
             { new: true, upsert: true }
         );
-        console.log('=======review', review);
+
+        console.log('Review:', review);
 
         res.status(201).json({ message: 'Review added successfully', data: review });
     } catch (error) {
-        console.log(error);
+        console.error('Error:', error);
         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
     }
 };
