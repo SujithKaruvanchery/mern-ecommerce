@@ -251,7 +251,7 @@ const clearCartAfterPayment = async (req, res) => {
         }
 
         cart.products = [];
-        cart.calculateTotalPrice();
+        cart.totalPrice = 0;
         await cart.save();
 
         res.status(200).json({ message: 'Your cart has been cleared successfully after payment', data: cart });
