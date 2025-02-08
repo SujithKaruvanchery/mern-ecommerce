@@ -30,4 +30,8 @@ app.listen(process.env.PORT, (error) => {
     }
 })
 
+console.log("PORT:", process.env.PORT);
+console.log("MongoDB URL:", process.env.MONGO_URL);
+console.log("Stripe Secret Key:", process.env.STRIPE_SECRET_KEY);
+console.log("Client Domain:", process.env.CLIENT_DOMAIN);
 

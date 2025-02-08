@@ -235,6 +235,32 @@ const updateCart = async (req, res) => {
     }
 };
 
+// const clearCartAfterPayment = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+//         const paymentStatus = req.body.paymentStatus;
+
+//         if (paymentStatus !== 'success') {
+//             return res.status(400).json({ message: 'Payment failed, cart not cleared.' });
+//         }
+
+//         const cart = await CartDB.findOne({ userId });
+
+//         if (!cart) {
+//             return res.status(404).json({ message: 'Cart not found for the user' });
+//         }
+
+//         cart.products = [];
+//         cart.totalPrice = 0;
+//         await cart.save();
+
+//         res.status(200).json({ message: 'Your cart has been cleared successfully after payment', data: cart });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
+
 const clearCartAfterPayment = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -246,8 +272,8 @@ const clearCartAfterPayment = async (req, res) => {
 
         const cart = await CartDB.findOne({ userId });
 
-        if (!cart) {
-            return res.status(404).json({ message: 'Cart not found for the user' });
+        if (!cart || cart.products.length === 0) {
+            return res.status(404).json({ message: 'Cart already empty or not found' });
         }
 
         cart.products = [];
