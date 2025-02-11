@@ -204,6 +204,33 @@ const addOrUpdateReview = async (req, res) => {
 //     }
 // };
 
+// const deleteReview = async (req, res) => {
+//     try {
+//         const { reviewId } = req.params;
+//         const userId = req.user.id;
+
+//         if (!reviewId.match(/^[0-9a-fA-F]{24}$/)) {
+//             return res.status(400).json({ message: "Invalid review ID" });
+//         }
+
+//         const review = await ReviewDB.findOne({ _id: reviewId });
+
+//         if (!review) {
+//             return res.status(404).json({ message: "Review not found" });
+//         }
+
+//         if (review.userId.toString() !== userId) {
+//             return res.status(403).json({ message: "You are not authorized to delete this review" });
+//         }
+
+//         await review.deleteOne();
+//         res.status(200).json({ message: "Review deleted successfully" });
+//     } catch (error) {
+//         console.error("Error deleting review:", error);
+//         res.status(500).json({ message: "Internal Server Error" });
+//     }
+// };
+
 const deleteReview = async (req, res) => {
     try {
         const { reviewId } = req.params;
@@ -213,18 +240,18 @@ const deleteReview = async (req, res) => {
             return res.status(400).json({ message: "Invalid review ID" });
         }
 
-        const review = await ReviewDB.findOne({ _id: reviewId });
+        const review = await ReviewDB.findById(reviewId);
 
         if (!review) {
             return res.status(404).json({ message: "Review not found" });
         }
 
-        if (review.userId.toString() !== userId) {
-            return res.status(403).json({ message: "You are not authorized to delete this review" });
+        if (review.userId.toHexString() !== userId) {
+            return res.status(403).json({ message: "You can only delete your own reviews" });
         }
 
         await review.deleteOne();
-        res.status(200).json({ message: "Review deleted successfully" });
+        res.status(200).json({ message: "Review deleted successfully", reviewId });
     } catch (error) {
         console.error("Error deleting review:", error);
         res.status(500).json({ message: "Internal Server Error" });
