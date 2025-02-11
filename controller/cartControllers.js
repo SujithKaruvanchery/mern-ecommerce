@@ -1,5 +1,6 @@
 const CartDB = require('../model/cartModel')
 const ProductDB = require('../model/productModel')
+const OrderDB = require('../model/orderModel')
 
 const getCart = async (req, res) => {
     try {
@@ -261,30 +262,73 @@ const updateCart = async (req, res) => {
 //     }
 // };
 
+// const clearCartAfterPayment = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+//         const paymentStatus = req.body.paymentStatus;
+
+//         if (paymentStatus !== 'success') {
+//             return res.status(400).json({ message: 'Payment failed, cart not cleared.' });
+//         }
+
+//         const cart = await CartDB.findOne({ userId });
+
+//         if (!cart || cart.products.length === 0) {
+//             return res.status(404).json({ message: 'Cart already empty or not found' });
+//         }
+
+//         cart.products = [];
+//         cart.totalPrice = 0;
+//         await cart.save();
+
+//         res.status(200).json({ message: 'Your cart has been cleared successfully after payment', data: cart });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
+
 const clearCartAfterPayment = async (req, res) => {
     try {
         const userId = req.user.id;
         const paymentStatus = req.body.paymentStatus;
 
-        if (paymentStatus !== 'success') {
-            return res.status(400).json({ message: 'Payment failed, cart not cleared.' });
+        if (paymentStatus !== "success") {
+            return res.status(400).json({ message: "Payment failed, cart not cleared." });
         }
 
-        const cart = await CartDB.findOne({ userId });
+        const cart = await CartDB.findOne({ userId }).populate("products.productId");
 
         if (!cart || cart.products.length === 0) {
-            return res.status(404).json({ message: 'Cart already empty or not found' });
+            return res.status(404).json({ message: "Cart already empty or not found" });
         }
+
+        const orderItems = cart.products.map((item) => ({
+            productId: item.productId._id,
+            quantity: item.quantity,
+            price: item.productId.price,
+        }));
+
+        const order = new OrderDB({
+            userId: userId,
+            items: orderItems,
+            orderStatus: "Order Received",
+            verifiedByAdmin: false,
+            orderPlaced: false,
+        });
+
+        await order.save();
 
         cart.products = [];
         cart.totalPrice = 0;
         await cart.save();
 
-        res.status(200).json({ message: 'Your cart has been cleared successfully after payment', data: cart });
+        res.status(200).json({ message: "Order placed successfully, cart cleared.", order });
     } catch (error) {
-        console.log(error);
-        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+        console.error(error);
+        res.status(500).json({ error: error.message || "Internal Server Error" });
     }
 };
+
 
 module.exports = { getCart, addProductToCart, removeProductFromCart, clearCart, updateCart,clearCartAfterPayment }
