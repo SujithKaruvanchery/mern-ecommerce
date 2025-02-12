@@ -55,16 +55,40 @@ const getAllOrders = async (req, res) => {
     }
 };
 
+// const getAllOrdersBySeller = async (req, res) => {
+//     try {
+//         const orders = await OrderDB.find()
+//             .populate('userId', 'name email')
+//             .populate('items.productId', 'title price');
+
+//         res.json(orders);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
+
 const getAllOrdersBySeller = async (req, res) => {
     try {
-        const orders = await OrderDB.find()
+        const sellerId = req.user.id;
+        console.log("Seller ID from token:", sellerId);
+
+        const allOrders = await OrderDB.find();
+        console.log("All orders in database:", allOrders);
+
+        const orders = await OrderDB.find({ "items.sellerId": sellerId })
             .populate('userId', 'name email')
             .populate('items.productId', 'title price');
 
-        res.json(orders);
+        console.log("Orders matching seller ID:", orders);
+
+        res.status(200).json({
+            message: "Orders successfully retrieved for seller",
+            data: orders,
+        });
     } catch (error) {
-        console.log(error);
-        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+        console.error("Error fetching seller orders:", error);
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
     }
 };
 
