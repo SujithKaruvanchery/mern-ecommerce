@@ -184,5 +184,29 @@ const placeOrderAfterVerification = async (req, res) => {
     }
 };
 
+const cancelOrder = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const userId = req.user.id;
 
-module.exports = { getOrdersByUserId, getAllOrders, getAllOrdersBySeller,updateOrderStatus,verifyOrderByAdmin,placeOrderAfterVerification }
+        const order = await OrderDB.findOne({ _id: orderId, userId });
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found or does not belong to you" });
+        }
+
+        if (["Shipping Progress", "Out for Dispatch", "Delivered Successfully"].includes(order.orderStatus)) {
+            return res.status(400).json({ message: "Order cannot be canceled at this stage" });
+        }
+
+        order.orderStatus = "Canceled";
+        await order.save();
+
+        res.status(200).json({ message: "Order successfully canceled", order });
+    } catch (error) {
+        console.error("Error canceling order:", error);
+        res.status(500).json({ error: error.message || "Internal Server Error" });
+    }
+};
+
+module.exports = { getOrdersByUserId, getAllOrders, getAllOrdersBySeller,updateOrderStatus,verifyOrderByAdmin,placeOrderAfterVerification,cancelOrder }
