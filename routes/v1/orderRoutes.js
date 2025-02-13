@@ -1,4 +1,4 @@
-const { getOrdersByUserId, getAllOrders, getAllOrdersBySeller, updateOrderStatus, placeOrderAfterVerification, verifyOrderByAdmin, cancelOrder } = require("../../controller/orderControllers");
+const { getOrdersByUserId, getAllOrders, getAllOrdersBySeller, updateOrderStatus, placeOrderAfterVerification, verifyOrderByAdmin, cancelOrder, trackOrder } = require("../../controller/orderControllers");
 const { adminAuth } = require("../../middleware/adminAuth");
 const { sellerAuth } = require("../../middleware/sellerAuth");
 const { userAuth } = require("../../middleware/userAuth");
@@ -11,6 +11,7 @@ orderRouter.get('/get-all-orders-seller', sellerAuth, getAllOrdersBySeller)
 orderRouter.put('/orders/:orderId/status', sellerAuth, updateOrderStatus)
 orderRouter.put("/admin/verify-order/:orderId", adminAuth, verifyOrderByAdmin);
 orderRouter.put("/admin/place-order/:orderId", adminAuth, placeOrderAfterVerification);
-orderRouter.patch('/orders/:orderId/cancel', userAuth, cancelOrder);
+orderRouter.patch('/orders/:orderId/cancel-order', userAuth, cancelOrder);
+orderRouter.get('/orders/:orderId/track-order', userAuth, trackOrder);
 
 module.exports = orderRouter;

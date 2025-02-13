@@ -247,4 +247,22 @@ const cancelOrder = async (req, res) => {
     }
 };
 
-module.exports = { getOrdersByUserId, getAllOrders, getAllOrdersBySeller,updateOrderStatus,verifyOrderByAdmin,placeOrderAfterVerification,cancelOrder }
+const trackOrder = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const userId = req.user.id;
+
+        const order = await OrderDB.findOne({ _id: orderId, userId }).select("orderStatus");
+
+        if (!order) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        res.status(200).json({ message: "Order status retrieved successfully", status: order.orderStatus });
+    } catch (error) {
+        console.error("Error tracking order:", error);
+        res.status(500).json({ error: error.message || "Internal Server Error" });
+    }
+};
+
+module.exports = { getOrdersByUserId, getAllOrders, getAllOrdersBySeller,updateOrderStatus,verifyOrderByAdmin,placeOrderAfterVerification,cancelOrder,trackOrder }
