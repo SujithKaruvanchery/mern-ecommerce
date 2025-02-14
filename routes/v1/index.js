@@ -6,6 +6,7 @@ const productRouter = require('./productRoutes')
 const reviewRouter = require('./reviewRoutes')
 const sellerRouter = require('./sellerRoutes')
 const userRouter = require('./userRoutes')
+const wishlistRouter = require('./wishlistRoutes')
 
 const v1Router = require('express').Router()
 
@@ -17,5 +18,6 @@ v1Router.use('/cart',cartRouter)
 v1Router.use('/review',reviewRouter)
 v1Router.use('/payment',paymentRouter)
 v1Router.use('/order',orderRouter)
+v1Router.use('wishlist',wishlistRouter)
 
 module.exports = v1Router
