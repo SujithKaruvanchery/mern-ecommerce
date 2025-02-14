@@ -18,6 +18,6 @@ v1Router.use('/cart',cartRouter)
 v1Router.use('/review',reviewRouter)
 v1Router.use('/payment',paymentRouter)
 v1Router.use('/order',orderRouter)
-v1Router.use('wishlist',wishlistRouter)
+v1Router.use('/wishlist',wishlistRouter)
 
 module.exports = v1Router
