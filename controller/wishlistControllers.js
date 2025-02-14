@@ -2,7 +2,7 @@ const WishlistDB = require('../model/wishlistModel');
 
 const addToWishlist = async (req, res) => {
     const { productId } = req.body;
-    const userId = req.user?.id;  // Ensure req.user is defined
+    const userId = req.user?.id;
 
     console.log("Received request to add product to wishlist");
     console.log("User ID:", userId);
