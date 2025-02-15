@@ -133,4 +133,19 @@ const productNewArrival = async (req, res) => {
     }
 };
 
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory, productNewArrival };
+const getTotalProductCount = async (req, res) => {
+    try {
+        console.log("Fetching total product count...");
+
+        const count = await ProductDB.countDocuments();
+
+        console.log("Total Products Count:", count);
+
+        res.status(200).json({ totalProducts: count });
+    } catch (error) {
+        console.error("Error fetching total product count:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory, productNewArrival,getTotalProductCount };
