@@ -96,7 +96,7 @@ const getAllOrdersBySeller = async (req, res) => {
     try {
         const sellerId = req.user.id;
         console.log("Seller ID from token:", sellerId);
-        
+
         const orders = await OrderDB.find()
             .populate({
                 path: 'items.productId',
@@ -121,16 +121,65 @@ const getAllOrdersBySeller = async (req, res) => {
     }
 };
 
+// const updateOrderStatus = async (req, res) => {
+//     try {
+//         const { orderId } = req.params;
+//         const { status } = req.body;
+
+//         if (!['Order Received',
+//             'Shipping Progress',
+//             'Out for Dispatch',
+//             'Delivered Successfully'].includes(status)) {
+//             return res.status(400).json({ message: 'The provided status is not valid' });
+//         }
+
+//         const updatedOrder = await OrderDB.findByIdAndUpdate(
+//             orderId,
+//             { orderStatus: status },
+//             { new: true, runValidators: true }
+//         );
+
+//         if (!updatedOrder) {
+//             return res.status(404).json({ message: 'Order with the given ID does not exist' });
+//         }
+
+//         res.status(200).json({ message: 'The order status has been successfully updated', order: updatedOrder });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
+
 const updateOrderStatus = async (req, res) => {
     try {
         const { orderId } = req.params;
         const { status } = req.body;
 
-        if (!['Order Received',
-            'Shipping Progress',
-            'Out for Dispatch',
-            'Delivered Successfully'].includes(status)) {
-            return res.status(400).json({ message: 'The provided status is not valid' });
+        const validStatuses = [
+            "Order Received",
+            "Shipping Progress",
+            "Out for Dispatch",
+            "Delivered Successfully"
+        ];
+
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ message: "The provided status is not valid" });
+        }
+
+        const currentOrder = await OrderDB.findById(orderId);
+        if (!currentOrder) {
+            return res.status(404).json({ message: "Order with the given ID does not exist" });
+        }
+
+        const statusOrder = {
+            "Order Received": 1,
+            "Shipping Progress": 2,
+            "Out for Dispatch": 3,
+            "Delivered Successfully": 4,
+        };
+
+        if (statusOrder[status] < statusOrder[currentOrder.orderStatus]) {
+            return res.status(400).json({ message: "Cannot move order status backward" });
         }
 
         const updatedOrder = await OrderDB.findByIdAndUpdate(
@@ -139,14 +188,10 @@ const updateOrderStatus = async (req, res) => {
             { new: true, runValidators: true }
         );
 
-        if (!updatedOrder) {
-            return res.status(404).json({ message: 'Order with the given ID does not exist' });
-        }
-
-        res.status(200).json({ message: 'The order status has been successfully updated', order: updatedOrder });
+        res.status(200).json({ message: "The order status has been successfully updated", order: updatedOrder });
     } catch (error) {
         console.log(error);
-        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+        res.status(500).json({ error: "Internal Server Error" });
     }
 };
 
