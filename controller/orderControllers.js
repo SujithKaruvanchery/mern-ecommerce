@@ -68,23 +68,52 @@ const getAllOrders = async (req, res) => {
 //     }
 // };
 
+// const getAllOrdersBySeller = async (req, res) => {
+//     try {
+//         const sellerId = req.user.id;
+//         console.log("Seller ID from token:", sellerId);
+
+//         const allOrders = await OrderDB.find();
+//         console.log("All orders in database:", allOrders);
+
+//         const orders = await OrderDB.find({ "items.sellerId": sellerId })
+//             .populate('userId', 'name email')
+//             .populate('items.productId', 'title price');
+
+//         console.log("Orders matching seller ID:", orders);
+
+//         res.status(200).json({
+//             message: "Orders successfully retrieved for seller",
+//             data: orders,
+//         });
+//     } catch (error) {
+//         console.error("Error fetching seller orders:", error);
+//         res.status(500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
+
 const getAllOrdersBySeller = async (req, res) => {
     try {
         const sellerId = req.user.id;
         console.log("Seller ID from token:", sellerId);
+        
+        const orders = await OrderDB.find()
+            .populate({
+                path: 'items.productId',
+                select: 'title price seller',
+                populate: { path: 'seller', select: '_id' }
+            })
+            .populate('userId', 'name email');
 
-        const allOrders = await OrderDB.find();
-        console.log("All orders in database:", allOrders);
+        const sellerOrders = orders.filter(order =>
+            order.items.some(item => item.productId.seller?._id.toString() === sellerId)
+        );
 
-        const orders = await OrderDB.find({ "items.sellerId": sellerId })
-            .populate('userId', 'name email')
-            .populate('items.productId', 'title price');
-
-        console.log("Orders matching seller ID:", orders);
+        console.log("Orders matching seller ID:", sellerOrders);
 
         res.status(200).json({
             message: "Orders successfully retrieved for seller",
-            data: orders,
+            data: sellerOrders,
         });
     } catch (error) {
         console.error("Error fetching seller orders:", error);
