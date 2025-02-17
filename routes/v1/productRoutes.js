@@ -1,4 +1,4 @@
-const { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory, productNewArrival, getTotalProductCount } = require('../../controller/productControllers')
+const { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory, productNewArrival, getTotalProductCount, updateProductStock } = require('../../controller/productControllers')
 const { upload } = require('../../middleware/multer')
 const { sellerAuth } = require('../../middleware/sellerAuth')
 
@@ -12,5 +12,6 @@ productRouter.delete('/delete-product/:id',sellerAuth, deleteProduct)
 productRouter.get('/products/:category', productCategory)
 productRouter.get('/get-new-arrivals', productNewArrival);
 productRouter.get('/total-products', sellerAuth, getTotalProductCount);
+productRouter.post('/update-stock', updateProductStock);
 
 module.exports = productRouter

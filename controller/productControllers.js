@@ -148,4 +148,51 @@ const getTotalProductCount = async (req, res) => {
     }
 };
 
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory, productNewArrival,getTotalProductCount };
+const updateProductStock = async (req, res) => {
+    try {
+        const { productId, quantityPurchased } = req.body;
+
+        console.log('Received request to update product stock');
+        console.log('Product ID:', productId);
+        console.log('Quantity Purchased:', quantityPurchased);
+
+        if (quantityPurchased <= 0) {
+            console.log('Invalid quantity purchased');
+            return res.status(400).json({ message: 'Invalid quantity purchased' });
+        }
+
+        const product = await ProductDB.findById(productId);
+
+        if (!product) {
+            console.log('Product not found');
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        console.log('Product found:', product);
+        console.log('Current Stock Quantity:', product.stockQuantity);
+
+        if (product.stockQuantity < quantityPurchased) {
+            console.log('Not enough stock available');
+            return res.status(400).json({ message: 'Not enough stock available' });
+        }
+
+        product.stockQuantity -= quantityPurchased;
+
+        console.log('Updated Stock Quantity:', product.stockQuantity);
+
+        const updatedProduct = await product.save();
+
+        console.log('Product stock updated successfully:', updatedProduct);
+
+        res.status(200).json({
+            message: 'Product stock updated successfully',
+            data: updatedProduct
+        });
+
+    } catch (error) {
+        console.error('Error updating stock:', error);
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory, productNewArrival,getTotalProductCount,updateProductStock };
