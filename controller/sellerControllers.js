@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/token')
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const OrderDB = require('../model/orderModel')
+const ProductDB = require('../model/productModel')
 
 const registerSeller = async (req, res) => {
     try {
@@ -288,4 +290,37 @@ const resetPasswordSeller = async (req, res) => {
     }
 };
 
-module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers, forgotPasswordSeller, resetPasswordSeller }
+const getDashboardData = async (req, res) => {
+    try {
+        const sellerId = req.user.id;
+        console.log("Seller ID:", sellerId);
+
+        const totalSales = await OrderDB.countDocuments({ "items.sellerId": sellerId });
+        console.log("Total Sales:", totalSales);
+
+        const revenue = await OrderDB.aggregate([
+            { $match: { "items.sellerId": sellerId, orderStatus: "Delivered Successfully" } },
+            { $group: { _id: null, totalRevenue: { $sum: "$totalPrice" } } }
+        ]);
+        console.log("Revenue:", revenue);
+
+        const pendingOrders = await OrderDB.countDocuments({ "items.sellerId": sellerId, orderStatus: "Pending" });
+        console.log("Pending Orders:", pendingOrders);
+
+        const stockQuantities = await ProductDB.find({ sellerId }).select('title stockQuantity');
+
+        console.log("Stock Quantities:", stockQuantities);
+
+        res.status(200).json({
+            totalSales,
+            revenue: revenue[0]?.totalRevenue || 0,
+            pendingOrders,
+            stockQuantities
+        });
+    } catch (error) {
+        console.error("Error in getDashboardData:", error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers, forgotPasswordSeller, resetPasswordSeller,getDashboardData }

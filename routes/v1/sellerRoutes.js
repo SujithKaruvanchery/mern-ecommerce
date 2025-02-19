@@ -1,4 +1,4 @@
-const { loginSeller, registerSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers, forgotPasswordSeller, resetPasswordSeller } = require('../../controller/sellerControllers')
+const { loginSeller, registerSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers, forgotPasswordSeller, resetPasswordSeller, getDashboardData } = require('../../controller/sellerControllers')
 const { adminAuth } = require('../../middleware/adminAuth')
 const { sellerAuth } = require('../../middleware/sellerAuth')
 
@@ -14,5 +14,6 @@ sellerRouter.delete('/delete-seller/:id', sellerAuth, deleteSeller)
 sellerRouter.get('/get-all-sellers', adminAuth, getAllSellers)
 sellerRouter.post('/forgot-password', forgotPasswordSeller)
 sellerRouter.post('/reset-password/:token', resetPasswordSeller)
+sellerRouter.get('/dashboard',sellerAuth,getDashboardData)
 
 module.exports = sellerRouter

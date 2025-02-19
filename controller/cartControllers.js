@@ -203,36 +203,112 @@ const clearCart = async (req, res) => {
     }
 };
 
+// const updateCart = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+//         const { productId, quantity } = req.body;
+
+//         if (!productId || quantity === undefined || quantity < 1) {
+//             return res.status(400).json({ message: 'Please provide a valid productId and quantity greater than 0' });
+//         }
+
+//         const cart = await CartDB.findOne({ userId });
+//         if (!cart) {
+//             return res.status(404).json({ message: 'Cart not found for the user' });
+//         }
+
+//         const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
+
+//         if (productIndex === -1) {
+//             return res.status(404).json({ message: 'Product not found in the cart' });
+//         }
+
+//         cart.products[productIndex].quantity = quantity;
+
+//         cart.calculateTotalPrice();
+
+//         await cart.save();
+
+//         res.status(200).json({ message: 'Cart updated successfully', data: cart });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
+
+// const updateCart = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+//         const { productId, quantity } = req.body;
+
+//         if (!productId || !Number.isInteger(quantity) || quantity < 1) {
+//             return res.status(400).json({ message: 'Invalid productId or quantity. Quantity must be a positive integer.' });
+//         }
+
+//         const cart = await CartDB.findOne({ userId });
+//         if (!cart) {
+//             return res.status(404).json({ message: 'Cart not found for the user' });
+//         }
+
+//         const product = cart.products.find(item => item.productId.toString() === productId);
+//         if (!product) {
+//             return res.status(404).json({ message: 'Product not found in the cart' });
+//         }
+
+//         // ✅ Update quantity
+//         product.quantity = quantity;
+
+//         // ✅ Ensure `calculateTotalPrice()` exists before calling it
+//         if (typeof cart.calculateTotalPrice === "function") {
+//             cart.calculateTotalPrice();
+//         } else {
+//             cart.totalPrice = cart.products.reduce((acc, item) => acc + item.quantity * item.price, 0);
+//         }
+
+//         await cart.save();
+
+//         return res.status(200).json({ message: 'Cart updated successfully', data: cart });
+//     } catch (error) {
+//         console.error('Update Cart Error:', error);
+//         return res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// };
+
 const updateCart = async (req, res) => {
     try {
         const userId = req.user.id;
         const { productId, quantity } = req.body;
 
-        if (!productId || quantity === undefined || quantity < 1) {
-            return res.status(400).json({ message: 'Please provide a valid productId and quantity greater than 0' });
+        if (!productId || !Number.isInteger(quantity) || quantity < 1) {
+            return res.status(400).json({ message: 'Invalid productId or quantity. Quantity must be a positive integer.' });
         }
 
-        const cart = await CartDB.findOne({ userId });
+        const cart = await CartDB.findOne({ userId }).populate("products.productId");
         if (!cart) {
             return res.status(404).json({ message: 'Cart not found for the user' });
         }
 
-        const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
-
-        if (productIndex === -1) {
+        const product = cart.products.find(item => item.productId._id.toString() === productId);
+        if (!product) {
             return res.status(404).json({ message: 'Product not found in the cart' });
         }
 
-        cart.products[productIndex].quantity = quantity;
+        product.quantity = quantity;
 
-        cart.calculateTotalPrice();
+        cart.markModified('products');
+
+        if (typeof cart.calculateTotalPrice === "function") {
+            cart.calculateTotalPrice();
+        } else {
+            cart.totalPrice = cart.products.reduce((acc, item) => acc + item.quantity * (item.productId.price || 0), 0);
+        }
 
         await cart.save();
 
-        res.status(200).json({ message: 'Cart updated successfully', data: cart });
+        return res.status(200).json({ message: 'Cart updated successfully', data: cart });
     } catch (error) {
-        console.error(error);
-        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+        console.error('Update Cart Error:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
 

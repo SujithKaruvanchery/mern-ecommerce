@@ -1,25 +1,5 @@
 const OrderDB = require('../model/orderModel')
 
-// const getOrdersByUserId = async (req, res) => {
-//     try {
-//         const id = req.user.id;
-//         console.log('Retrieving orders for user ID:', id);
-
-//         const orders = await OrderDB.find({ id })
-//             .populate('items.productId', 'title price image')
-//             .exec();
-
-//         console.log('Successfully retrieved orders:', orders);
-//         res.status(200).json({
-//             message: 'Orders successfully retrieved',
-//             data: orders,
-//         });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
-//     }
-// };
-
 const getOrdersByUserId = async (req, res) => {
     try {
         const id = req.user.id;
@@ -40,7 +20,6 @@ const getOrdersByUserId = async (req, res) => {
     }
 };
 
-
 const getAllOrders = async (req, res) => {
     try {
 
@@ -54,43 +33,6 @@ const getAllOrders = async (req, res) => {
         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
     }
 };
-
-// const getAllOrdersBySeller = async (req, res) => {
-//     try {
-//         const orders = await OrderDB.find()
-//             .populate('userId', 'name email')
-//             .populate('items.productId', 'title price');
-
-//         res.json(orders);
-//     } catch (error) {
-//         console.log(error);
-//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
-//     }
-// };
-
-// const getAllOrdersBySeller = async (req, res) => {
-//     try {
-//         const sellerId = req.user.id;
-//         console.log("Seller ID from token:", sellerId);
-
-//         const allOrders = await OrderDB.find();
-//         console.log("All orders in database:", allOrders);
-
-//         const orders = await OrderDB.find({ "items.sellerId": sellerId })
-//             .populate('userId', 'name email')
-//             .populate('items.productId', 'title price');
-
-//         console.log("Orders matching seller ID:", orders);
-
-//         res.status(200).json({
-//             message: "Orders successfully retrieved for seller",
-//             data: orders,
-//         });
-//     } catch (error) {
-//         console.error("Error fetching seller orders:", error);
-//         res.status(500).json({ error: error.message || 'Internal Server Error' });
-//     }
-// };
 
 const getAllOrdersBySeller = async (req, res) => {
     try {
@@ -126,11 +68,31 @@ const getAllOrdersBySeller = async (req, res) => {
 //         const { orderId } = req.params;
 //         const { status } = req.body;
 
-//         if (!['Order Received',
-//             'Shipping Progress',
-//             'Out for Dispatch',
-//             'Delivered Successfully'].includes(status)) {
-//             return res.status(400).json({ message: 'The provided status is not valid' });
+//         const validStatuses = [
+//             "Order Received",
+//             "Shipping Progress",
+//             "Out for Dispatch",
+//             "Delivered Successfully"
+//         ];
+
+//         if (!validStatuses.includes(status)) {
+//             return res.status(400).json({ message: "The provided status is not valid" });
+//         }
+
+//         const currentOrder = await OrderDB.findById(orderId);
+//         if (!currentOrder) {
+//             return res.status(404).json({ message: "Order with the given ID does not exist" });
+//         }
+
+//         const statusOrder = {
+//             "Order Received": 1,
+//             "Shipping Progress": 2,
+//             "Out for Dispatch": 3,
+//             "Delivered Successfully": 4,
+//         };
+
+//         if (statusOrder[status] < statusOrder[currentOrder.orderStatus]) {
+//             return res.status(400).json({ message: "Cannot move order status backward" });
 //         }
 
 //         const updatedOrder = await OrderDB.findByIdAndUpdate(
@@ -139,17 +101,12 @@ const getAllOrdersBySeller = async (req, res) => {
 //             { new: true, runValidators: true }
 //         );
 
-//         if (!updatedOrder) {
-//             return res.status(404).json({ message: 'Order with the given ID does not exist' });
-//         }
-
-//         res.status(200).json({ message: 'The order status has been successfully updated', order: updatedOrder });
+//         res.status(200).json({ message: "The order status has been successfully updated", order: updatedOrder });
 //     } catch (error) {
 //         console.log(error);
-//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+//         res.status(500).json({ error: "Internal Server Error" });
 //     }
 // };
-
 const updateOrderStatus = async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -169,6 +126,10 @@ const updateOrderStatus = async (req, res) => {
         const currentOrder = await OrderDB.findById(orderId);
         if (!currentOrder) {
             return res.status(404).json({ message: "Order with the given ID does not exist" });
+        }
+
+        if (currentOrder.orderStatus === "Canceled") {
+            return res.status(400).json({ message: "Cannot update a canceled order" });
         }
 
         const statusOrder = {
@@ -257,31 +218,6 @@ const placeOrderAfterVerification = async (req, res) => {
         res.status(error.status || 500).json({ error: error.message || "Internal Server Error" });
     }
 };
-
-// const cancelOrder = async (req, res) => {
-//     try {
-//         const { orderId } = req.params;
-//         const userId = req.user.id;
-
-//         const order = await OrderDB.findOne({ _id: orderId, userId });
-
-//         if (!order) {
-//             return res.status(404).json({ message: "Order not found or does not belong to you" });
-//         }
-
-//         if (["Shipping Progress", "Out for Dispatch", "Delivered Successfully"].includes(order.orderStatus)) {
-//             return res.status(400).json({ message: "Order cannot be canceled at this stage" });
-//         }
-
-//         order.orderStatus = "Canceled";
-//         await order.save();
-
-//         res.status(200).json({ message: "Order successfully canceled", order });
-//     } catch (error) {
-//         console.error("Error canceling order:", error);
-//         res.status(500).json({ error: error.message || "Internal Server Error" });
-//     }
-// };
 
 const cancelOrder = async (req, res) => {
     try {
