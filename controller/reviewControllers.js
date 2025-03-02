@@ -277,4 +277,4 @@ const getAverageRating = async (req, res) => {
     }
 };
 
-module.exports = { getProductReview, addOrUpdateReview, deleteReview, getAverageRating }
+module.exports = { getProductReview, addOrUpdateReview, deleteReview,getAverageRating }

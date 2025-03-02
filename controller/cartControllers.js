@@ -406,6 +406,51 @@ const updateCart = async (req, res) => {
 //     }
 // };
 
+// const clearCartAfterPayment = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+//         const paymentStatus = req.body.paymentStatus;
+
+//         if (paymentStatus !== "success") {
+//             return res.status(400).json({ message: "Payment failed, cart not cleared." });
+//         }
+
+//         const cart = await CartDB.findOne({ userId }).populate("products.productId");
+
+//         if (!cart || cart.products.length === 0) {
+//             return res.status(404).json({ message: "Cart already empty or not found" });
+//         }
+
+//         const orderItems = cart.products.map((item) => ({
+//             productId: item.productId._id,
+//             quantity: item.quantity,
+//             price: item.productId.price,
+//         }));
+
+//         const totalPrice = cart.totalPrice;
+
+//         const order = new OrderDB({
+//             userId: userId,
+//             items: orderItems,
+//             totalPrice,
+//             orderStatus: "Order Received",
+//             verifiedByAdmin: false,
+//             orderPlaced: false,
+//         });
+
+//         await order.save();
+
+//         cart.products = [];
+//         cart.totalPrice = 0;
+//         await cart.save();
+
+//         res.status(200).json({ message: "Order placed successfully, cart cleared.", order });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: error.message || "Internal Server Error" });
+//     }
+// };
+
 const clearCartAfterPayment = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -427,12 +472,20 @@ const clearCartAfterPayment = async (req, res) => {
             price: item.productId.price,
         }));
 
-        const totalPrice = cart.totalPrice; // ✅ Ensure totalPrice is included
+        const totalPrice = cart.totalPrice;
+
+        for (const item of cart.products) {
+            await ProductDB.findByIdAndUpdate(
+                item.productId._id,
+                { $inc: { stockQuantity: -item.quantity } },
+                { new: true }
+            );
+        }
 
         const order = new OrderDB({
-            userId: userId,
+            userId,
             items: orderItems,
-            totalPrice, // ✅ Add totalPrice to avoid validation error
+            totalPrice,
             orderStatus: "Order Received",
             verifiedByAdmin: false,
             orderPlaced: false,
@@ -440,18 +493,15 @@ const clearCartAfterPayment = async (req, res) => {
 
         await order.save();
 
-        // ✅ Clear cart after order is placed
         cart.products = [];
         cart.totalPrice = 0;
         await cart.save();
 
-        res.status(200).json({ message: "Order placed successfully, cart cleared.", order });
+        res.status(200).json({ message: "Order placed successfully, cart cleared, stock updated.", order });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message || "Internal Server Error" });
     }
 };
-
-
 
 module.exports = { getCart, addProductToCart, removeProductFromCart, clearCart, updateCart,clearCartAfterPayment }

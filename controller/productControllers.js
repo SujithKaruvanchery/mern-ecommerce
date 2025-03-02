@@ -1,5 +1,6 @@
 const ProductDB = require('../model/productModel');
 const { cloudinaryInstance } = require("../config/cloudinaryConfig");
+const SellerDB = require('../model/sellerModel')
 
 const getAllProducts = async (req, res) => {
     try {
@@ -42,6 +43,7 @@ const createProduct = async (req, res) => {
     try {
         const { title, description, price, image, stockQuantity, category, isNewArrival } = req.body;
         const { id } = req.user;
+        console.log("=======id", id);
 
         if (!title || !description || !price || !stockQuantity || !category) {
             return res.status(400).json({ message: 'All fields must be filled out, including category.' });
@@ -62,13 +64,14 @@ const createProduct = async (req, res) => {
 
         await savedProduct.save();
 
+        await SellerDB.findByIdAndUpdate(id, { $push: { products: savedProduct._id } });
+
         res.status(200).json({ message: 'Product created successfully', data: savedProduct });
     } catch (error) {
         console.log(error);
         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
     }
 };
-
 
 const updateProduct = async (req, res) => {
     try {
@@ -195,4 +198,38 @@ const updateProductStock = async (req, res) => {
     }
 };
 
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory, productNewArrival,getTotalProductCount,updateProductStock };
+const updateProductByAdmin = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const product = await ProductDB.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        const updatedProduct = await ProductDB.findByIdAndUpdate(productId, req.body, { new: true });
+
+        res.status(200).json({ message: 'Product updated successfully by admin', data: updatedProduct });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+const deleteProductByAdmin = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const deletedProduct = await ProductDB.findByIdAndDelete(productId);
+
+        if (!deletedProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        res.status(200).json({ message: 'Product deleted successfully by admin', data: deletedProduct });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, productCategory, productNewArrival, getTotalProductCount, updateProductStock, updateProductByAdmin, deleteProductByAdmin };
