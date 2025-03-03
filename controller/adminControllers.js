@@ -291,14 +291,61 @@ const resetPassword = async (req, res) => {
     }
 };
 
+// const getDashboardStats = async (req, res) => {
+//     try {
+//         const totalUsers = await UserDB.countDocuments();
+//         const totalSellers = await SellerDB.countDocuments();
+//         const totalOrders = await OrderDB.countDocuments();
+//         const totalRevenue = await OrderDB.aggregate([
+//             { $group: { _id: null, total: { $sum: "$totalPrice" } } }
+//         ]);
+
+//         const monthlyOrders = await OrderDB.aggregate([
+//             {
+//                 $group: {
+//                     _id: { $month: "$createdAt" },
+//                     orders: { $sum: 1 },
+//                 },
+//             },
+//             { $sort: { _id: 1 } }
+//         ]);
+
+//         const orderData = monthlyOrders.map(item => ({
+//             name: new Date(0, item._id - 1).toLocaleString('default', { month: 'short' }),
+//             orders: item.orders,
+//         }));
+
+//         res.json({
+//             totalUsers,
+//             totalSellers,
+//             totalOrders,
+//             totalRevenue: totalRevenue[0]?.total || 0,
+//             orderData,
+//         });
+//     } catch (error) {
+//         res.status(500).json({ error: 'Failed to fetch dashboard stats' });
+//     }
+// };
+
 const getDashboardStats = async (req, res) => {
     try {
         const totalUsers = await UserDB.countDocuments();
+        console.log("Total Users:", totalUsers);
+
         const totalSellers = await SellerDB.countDocuments();
+        console.log("Total Sellers:", totalSellers);
+
         const totalOrders = await OrderDB.countDocuments();
+        console.log("Total Orders:", totalOrders);
+
+        const totalCanceledOrders = await OrderDB.countDocuments({ orderStatus: "Canceled" });
+        console.log("Total Canceled Orders:", totalCanceledOrders);
+
         const totalRevenue = await OrderDB.aggregate([
+            { $match: { orderStatus: { $ne: "Canceled" } } },
             { $group: { _id: null, total: { $sum: "$totalPrice" } } }
         ]);
+        console.log("Total Revenue:", totalRevenue[0]?.total || 0);
 
         const monthlyOrders = await OrderDB.aggregate([
             {
@@ -309,23 +356,26 @@ const getDashboardStats = async (req, res) => {
             },
             { $sort: { _id: 1 } }
         ]);
+        console.log("Monthly Orders Data:", monthlyOrders);
 
         const orderData = monthlyOrders.map(item => ({
             name: new Date(0, item._id - 1).toLocaleString('default', { month: 'short' }),
             orders: item.orders,
         }));
+        console.log("Formatted Monthly Orders:", orderData);
 
         res.json({
             totalUsers,
             totalSellers,
             totalOrders,
+            totalCanceledOrders,
             totalRevenue: totalRevenue[0]?.total || 0,
             orderData,
         });
     } catch (error) {
+        console.error("Error fetching dashboard stats:", error);
         res.status(500).json({ error: 'Failed to fetch dashboard stats' });
     }
 };
-
 
 module.exports = { registerAdmin, loginAdmin, adminProfile, logoutAdmin, checkAdmin, updateAdminProfile, forgotPassword, resetPassword, deleteAdmin,getDashboardStats }
