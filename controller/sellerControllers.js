@@ -443,4 +443,27 @@ const getSellerDashboardStats = async (req, res) => {
     }
 };
 
-module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers, forgotPasswordSeller, resetPasswordSeller,getSellerDashboardStats }
+const getSellerProducts = async (req, res) => {
+    try {
+        console.log("Fetching products for seller:", req.user.id);
+
+        const sellerId = req.user.id;
+        const products = await ProductDB.find({ seller: sellerId });
+
+        if (!products.length) {
+            console.log("No products found for seller:", sellerId);
+            return res.status(404).json({ message: 'No products found for this seller' });
+        }
+
+        console.log("Products fetched successfully for seller:", sellerId);
+        res.status(200).json({
+            message: 'Seller products fetched successfully',
+            data: products
+        });
+    } catch (error) {
+        console.error("Error fetching seller products:", error.message);
+        return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers, forgotPasswordSeller, resetPasswordSeller,getSellerDashboardStats,getSellerProducts }
