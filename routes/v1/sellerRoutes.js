@@ -14,7 +14,6 @@ sellerRouter.delete('/delete-seller/:id', sellerAuth, deleteSeller)
 sellerRouter.get('/get-all-sellers', adminAuth, getAllSellers)
 sellerRouter.post('/forgot-password', forgotPasswordSeller)
 sellerRouter.post('/reset-password/:token', resetPasswordSeller)
-// sellerRouter.get('/dashboard',sellerAuth,getDashboardData)
 sellerRouter.get("/dashboard",sellerAuth, getSellerDashboardStats);
 
 module.exports = sellerRouter

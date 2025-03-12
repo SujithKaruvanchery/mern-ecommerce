@@ -2,23 +2,6 @@ const ProductDB = require('../model/productModel')
 const ReviewDB = require('../model/reviewModel')
 const OrderDB = require('../model/orderModel')
 
-// const getProductReview = async (req, res) => {
-//     try {
-//         const { productId } = req.params;
-
-//         const reviews = await ReviewDB.find({ productId }).populate('userId', 'name').sort({ createdAt: -1 });
-
-//         if (!reviews.length) {
-//             return res.status(404).json({ message: 'No reviews available for this product' });
-//         }
-
-//         res.status(200).json({ message: 'Product reviews retrieved successfully', data: reviews });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(error.status || 500).json({ error: error.message || 'Internal server error' });
-//     }
-// };
-
 const getProductReview = async (req, res) => {
     try {
         const { productId } = req.params;
@@ -39,88 +22,6 @@ const getProductReview = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
-// const addReview = async (req, res) => {
-//     try {
-//         const { productId, rating, comment } = req.body;
-//         const userId = req.user.id;
-//         console.log('=======userId', userId);
-
-//         const product = await ProductDB.findById(productId);
-//         console.log('=======product', product);
-
-//         if (!product) {
-//             return res.status(404).json({ message: 'No products found in the database' });
-//         }
-
-//         if (rating > 5 || rating < 1) {
-//             return res.status(400).json({ message: 'Please provide a valid rating between 1 and 5' });
-//         }
-
-//         const review = await ReviewDB.findOneAndUpdate(
-//             { userId, productId },
-//             { rating, comment },
-//             { new: true, upsert: true }
-//         );
-//         console.log('=======review', review);
-
-//         res.status(201).json({ message: 'Review added successfully', data: review });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
-//     }
-// };
-
-// const addReview = async (req, res) => {
-//     try {
-//         const { productId, rating, comment } = req.body;
-//         const userId = req.user.id;
-
-//         console.log('Request body:', req.body); 
-//         console.log('User ID:', userId);
-
-//         const product = await ProductDB.findById(productId);
-
-//         if (!product) {
-//             console.log('Product not found:', productId);
-//             return res.status(404).json({ message: 'No products found in the database' });
-//         }
-
-//         console.log('Product found:', product);
-
-//         if (rating > 5 || rating < 1) {
-//             console.log('Invalid rating:', rating);
-//             return res.status(400).json({ message: 'Please provide a valid rating between 1 and 5' });
-//         }
-
-//         const order = await OrderDB.findOne({
-//             userId,
-//             "items.productId": productId,
-//             orderStatus: "Delivered Successfully",
-//         });
-
-//         console.log('Order:', order);
-//         console.log('User Order Check:', order);
-
-//         if (!order) {
-//             console.log('Order not found or not delivered:', order);
-//             return res.status(400).json({ message: 'You must have received the product to leave a review' });
-//         }
-
-//         const review = await ReviewDB.findOneAndUpdate(
-//             { userId, productId },
-//             { rating, comment },
-//             { new: true, upsert: true }
-//         );
-
-//         console.log('Review:', review);
-
-//         res.status(201).json({ message: 'Review added successfully', data: review });
-//     } catch (error) {
-//         console.error('Error:', error);
-//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
-//     }
-// };
 
 const addOrUpdateReview = async (req, res) => {
     try {
@@ -181,55 +82,6 @@ const addOrUpdateReview = async (req, res) => {
         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
     }
 };
-
-// const deleteReview = async (req, res) => {
-//     try {
-//         const { reviewId } = req.params;
-//         console.log('=======reviewId', reviewId);
-
-//         const userId = req.user.id;
-//         console.log('=======userId', userId);
-
-//         const review = await ReviewDB.findOneAndDelete({ _id: reviewId, userId });
-//         console.log('=======review', review);
-
-//         if (!review) {
-//             return res.status(404).json({ message: 'Review not found or you are not authorized to delete' });
-//         }
-
-//         res.status(200).json({ message: 'Review deleted successfully', data: review });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ error: error.message || 'Internal Server Error' });
-//     }
-// };
-
-// const deleteReview = async (req, res) => {
-//     try {
-//         const { reviewId } = req.params;
-//         const userId = req.user.id;
-
-//         if (!reviewId.match(/^[0-9a-fA-F]{24}$/)) {
-//             return res.status(400).json({ message: "Invalid review ID" });
-//         }
-
-//         const review = await ReviewDB.findOne({ _id: reviewId });
-
-//         if (!review) {
-//             return res.status(404).json({ message: "Review not found" });
-//         }
-
-//         if (review.userId.toString() !== userId) {
-//             return res.status(403).json({ message: "You are not authorized to delete this review" });
-//         }
-
-//         await review.deleteOne();
-//         res.status(200).json({ message: "Review deleted successfully" });
-//     } catch (error) {
-//         console.error("Error deleting review:", error);
-//         res.status(500).json({ message: "Internal Server Error" });
-//     }
-// };
 
 const deleteReview = async (req, res) => {
     try {
