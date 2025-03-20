@@ -52,8 +52,6 @@ import SellerAbout from "../pages/seller/SellerAbout";
 import SellerContact from "../pages/seller/SellerContact";
 import AdminAbout from "../pages/admin/AdminAbout";
 import AdminContact from "../pages/admin/AdminContact";
-import UpdateSellerProfile from "../pages/seller/UpdateSellerProfile";
-
 
 export const router = createBrowserRouter([
   {
@@ -100,7 +98,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "dashboard", element: <SellerDashboard /> },
           { path: "profile", element: <SellerProfile /> },
-          { path: "update-profile", element: <UpdateSellerProfile /> },
+          // { path: "update-profile", element: <UpdateSellerProfile /> },
           { path: "create-product", element: <CreateProduct /> },
           { path: "update-product/:id", element: <UpdateProduct /> },
           { path: "products", element: <SellerProducts /> },
