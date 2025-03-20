@@ -22,7 +22,6 @@ import AdminLayout from "../layout/AdminLayout";
 import AdminSignup from "../pages/admin/AdminSignup";
 import AdminLogin from "../pages/admin/AdminLogin";
 import AdminProfile from "../pages/admin/AdminProfile";
-import UpdateSellerProfile from "../pages/seller/UpdateSellerProfile";
 import UpdateAdminProfile from "../pages/admin/UpdateAdminProfile";
 import CreateProduct from "../pages/seller/CreateProduct";
 import UpdateProduct from "../pages/seller/UpdateProduct";
@@ -53,6 +52,8 @@ import SellerAbout from "../pages/seller/SellerAbout";
 import SellerContact from "../pages/seller/SellerContact";
 import AdminAbout from "../pages/admin/AdminAbout";
 import AdminContact from "../pages/admin/AdminContact";
+import UpdateSellerProfile from "../pages/seller/UpdateSellerProfile";
+
 
 export const router = createBrowserRouter([
   {
