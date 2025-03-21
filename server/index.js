@@ -11,13 +11,9 @@ connectDB()
 
 app.use(express.json())
 
-app.use(cors({ origin: ["http://localhost:5173","https://mango-ecommerce-client-9sy1ifw2q-sujithkaruvancherys-projects.vercel.app"], credentials: true, methods: ["GET", "POST", "PUT","PATCH", "DELETE"] }));
+app.use(cors({ origin: "http://localhost:5173", credentials: true, methods: ["GET", "POST", "PUT","PATCH", "DELETE"] }));
 
 app.use(cookieParser())
-
-app.get("/", (req, res,next) => {
-    res.send("Backend is running on Vercel!");
-});
 
 app.use('/api', apiRouter)
 
