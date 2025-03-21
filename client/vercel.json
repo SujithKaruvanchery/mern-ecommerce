@@ -1,18 +1,8 @@
 {
     "rewrites": [
-      { "source": "/api/*", "destination": "https://mango-ecommerce-server-git-main-sujithkaruvancherys-projects.vercel.app/api/:path*" }
-    ],
-    "redirects": [
-      { "source": "/old-route", "destination": "/new-route", "permanent": true }
-    ],
-    "headers": [
-      {
-        "source": "/(.*)",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
-      }
-    ],
-    "routes": [
-      { "src": "/(.*)", "dest": "/index.html" }
+        {
+            "source": "/(.*)",
+            "destination": "/"
+        }
     ]
-  }
-  
+}
