@@ -15,6 +15,10 @@ app.use(cors({ origin: ["http://localhost:5173","https://mango-ecommerce-client-
 
 app.use(cookieParser())
 
+app.get("/", (req, res) => {
+    res.send("Backend is running on Vercel!");
+});
+
 app.use('/api', apiRouter)
 
 app.all("*", (req, res) => {
