@@ -1,6 +1,6 @@
 {
     "rewrites": [
-      { "source": "/api/*", "destination": "https://your-backend-url.com/api/:path*" }
+      { "source": "/api/*", "destination": "https://mango-ecommerce-server-git-main-sujithkaruvancherys-projects.vercel.app/api/:path*" }
     ],
     "redirects": [
       { "source": "/old-route", "destination": "/new-route", "permanent": true }
