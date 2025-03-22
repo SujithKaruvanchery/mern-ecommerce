@@ -1,5 +1,5 @@
 const AdminDB = require('../model/adminModel')
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { generateToken } = require('../utils/token')
 const crypto = require('crypto');
 const nodemailer = require('nodemailer')
