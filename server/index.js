@@ -11,7 +11,7 @@ connectDB()
 
 app.use(express.json())
 
-app.use(cors({ origin: ["http://localhost:5173", "https://mern-ecommerce-client-five.vercel.app"], credentials: true, methods: ["GET", "POST", "PUT", "PATCH", "DELETE"] }));
+app.use(cors({ origin: ["http://localhost:5173", "https://mango-website-client.vercel.app"], credentials: true, methods: ["GET", "POST", "PUT", "PATCH", "DELETE"] }));
 
 app.use(cookieParser())
 
