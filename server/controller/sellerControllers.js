@@ -67,7 +67,11 @@ const loginSeller = async (req, res) => {
 
         const token = generateToken(seller, "seller");
 
-        res.cookie("seller_token", token);
+        res.cookie("seller_token", token, {
+            sameSite: "None",
+            secure: true,
+            httpOnly: true,
+        });
 
         {
             const { password, ...sellerWithoutPassword } = seller._doc
@@ -179,7 +183,11 @@ const logoutSeller = async (req, res) => {
             return res.status(403).json({ error: 'The seller account is inactive.' });
         }
 
-        res.clearCookie('seller_token');
+        res.clearCookie('seller_token', {
+            sameSite: "None",
+            secure: true,
+            httpOnly: true,
+        });
 
         res.status(200).json({ message: 'Successfully logged out seller', data: seller });
     } catch (error) {
@@ -313,17 +321,17 @@ const getSellerDashboardStats = async (req, res) => {
 
         const totalRevenue = await OrderDB.aggregate([
             { $unwind: "$items" },
-            { 
-                $match: { 
-                    "items.productId": { $in: productIds }, 
-                    orderStatus: { $ne: "Canceled" } 
-                } 
+            {
+                $match: {
+                    "items.productId": { $in: productIds },
+                    orderStatus: { $ne: "Canceled" }
+                }
             },
-            { 
-                $group: { 
-                    _id: null, 
-                    total: { $sum: { $multiply: ["$items.quantity", "$items.price"] } } 
-                } 
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: { $multiply: ["$items.quantity", "$items.price"] } }
+                }
             }
         ]);
         console.log("Total Revenue:", totalRevenue[0]?.total || 0);
@@ -382,4 +390,4 @@ const getSellerProducts = async (req, res) => {
     }
 };
 
-module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers, forgotPasswordSeller, resetPasswordSeller,getSellerDashboardStats,getSellerProducts }
+module.exports = { registerSeller, loginSeller, sellerProfile, updateSellerProfile, checkSeller, logoutSeller, deleteSeller, getAllSellers, forgotPasswordSeller, resetPasswordSeller, getSellerDashboardStats, getSellerProducts }
