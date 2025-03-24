@@ -66,7 +66,11 @@ const loginUser = async (req, res) => {
 
         const token = generateToken(user, "user");
 
-        res.cookie("user_token", token);
+        res.cookie("user_token", token, {
+            sameSite: "None",
+            secure: true,
+            httpOnly: true,
+        });
 
         {
             const { password, ...userWithoutPassword } = user._doc
@@ -114,7 +118,11 @@ const logoutUser = async (req, res) => {
             return res.status(403).json({ error: 'The user account is inactive.' });
         }
 
-        res.clearCookie('user_token');
+        res.clearCookie('user_token', {
+            sameSite: "None",
+            secure: true,
+            httpOnly: true,
+        });
 
         res.status(200).json({ message: 'Successfully logged out user', data: user });
     } catch (error) {
