@@ -72,7 +72,11 @@ const loginAdmin = async (req, res) => {
 
         const token = generateToken(admin, "admin");
 
-        res.cookie("admin_token", token);
+        res.cookie("admin_token", token, {
+            sameSite: "None",
+            secure: true,
+            httpOnly: true,
+        });
 
         {
             const { password, ...adminWithoutPassword } = admin._doc
@@ -123,7 +127,11 @@ const logoutAdmin = async (req, res) => {
             return res.status(403).json({ error: 'The admin account is inactive.' });
         }
 
-        res.clearCookie("admin_token");
+        res.clearCookie("admin_token", {
+            sameSite: "None",
+            secure: true,
+            httpOnly: true,
+        });
 
         res.status(200).json({ message: 'Successfully logged out admin', data: admin });
     } catch (error) {
@@ -342,4 +350,4 @@ const getDashboardStats = async (req, res) => {
     }
 };
 
-module.exports = { registerAdmin, loginAdmin, adminProfile, logoutAdmin, checkAdmin, updateAdminProfile, forgotPassword, resetPassword, deleteAdmin,getDashboardStats }
+module.exports = { registerAdmin, loginAdmin, adminProfile, logoutAdmin, checkAdmin, updateAdminProfile, forgotPassword, resetPassword, deleteAdmin, getDashboardStats }
