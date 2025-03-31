@@ -26,10 +26,16 @@ function Login() {
         data,
       });
 
+      // if (response.status === 200) {
+      //   toast.success("Welcome! You have logged in successfully.");
+      //   navigate(user.profile_route)
+      // }
       if (response.status === 200) {
         toast.success("Welcome! You have logged in successfully.");
-        navigate(user.profile_route)
+        console.log("Navigating to profile...");
+        navigate(user.profile_route);
       }
+      
     } catch (error) {
       if (error.response) {
         toast.error(
