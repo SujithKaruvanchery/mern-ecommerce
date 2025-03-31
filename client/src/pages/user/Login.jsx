@@ -30,6 +30,8 @@ function Login() {
       //   toast.success("Welcome! You have logged in successfully.");
       //   navigate(user.profile_route)
       // }
+
+      console.log("Login Response:", response);
       if (response.status === 200) {
         toast.success("Welcome! You have logged in successfully.");
         console.log("Navigating to profile...");
@@ -37,6 +39,7 @@ function Login() {
       }
       
     } catch (error) {
+      console.error("Login Error:", error);
       if (error.response) {
         toast.error(
           error.response.data.error ||
