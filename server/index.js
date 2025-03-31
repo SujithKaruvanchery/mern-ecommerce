@@ -15,7 +15,7 @@ app.use(cors({ origin: ["http://localhost:5173", "https://mango-website-client.v
 
 app.use(cookieParser())
 
-app.get("/",(req,res,next)=>{
+app.get("/", (req, res, next) => {
     res.json("hello world")
 })
 

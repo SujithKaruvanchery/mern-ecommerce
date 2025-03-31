@@ -28,7 +28,7 @@ function Login() {
 
       if (response.status === 200) {
         toast.success("Welcome! You have logged in successfully.");
-        navigate(user.profile_route);
+        navigate("/profile");
       }
     } catch (error) {
       if (error.response) {
