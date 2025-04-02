@@ -33,17 +33,35 @@ function Profile() {
     }
   };
 
+  // const handleLogout = async () => {
+  //   try {
+  //     await AxiosInstance.get("/user/logout");
+  //     toast.success("Logged out successfully");
+  //     navigate("/login");
+  //   } catch (error) {
+  //     toast.error(error.response?.data?.message || "Logout failed");
+  //   } finally {
+  //     setIsLogoutModalOpen(false);
+  //   }
+  // };
+
   const handleLogout = async () => {
     try {
-      await AxiosInstance.get("/user/logout");
-      toast.success("Logged out successfully");
-      navigate("/login");
+        await AxiosInstance.get("/user/logout", { withCredentials: true });
+
+        localStorage.removeItem("user_token");  
+        sessionStorage.clear();
+
+        toast.success("Logged out successfully");
+        
+        navigate("/login");
+        window.location.reload();  
     } catch (error) {
-      toast.error(error.response?.data?.message || "Logout failed");
+        toast.error(error.response?.data?.message || "Logout failed");
     } finally {
-      setIsLogoutModalOpen(false);
+        setIsLogoutModalOpen(false);
     }
-  };
+};
 
   return (
     <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
