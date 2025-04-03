@@ -28,7 +28,6 @@ function AdminLogin() {
 
       if (response.status === 200) {
         toast.success("Welcome, Admin! You have logged in successfully.");
-        localStorage.setItem("adminToken", response.data.token);
         navigate(admin.profile_route);
       }
     } catch (error) {
