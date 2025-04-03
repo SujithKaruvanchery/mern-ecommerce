@@ -96,7 +96,7 @@ paymentRouter.post('/create-checkout-session', userAuth, async (req, res, next) 
             success_url: `${client_domain}/user/payment/success`,
             cancel_url: `${client_domain}/user/payment/cancel`,
         });
-
+        console.log("Client Domain:", client_domain);
         res.json({ success: true, sessionId: session.id });
 
     } catch (error) {
