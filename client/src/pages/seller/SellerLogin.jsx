@@ -19,62 +19,34 @@ function SellerLogin() {
     signup_route: "/seller/signup",
   };
 
-  // const onSubmit = async (data) => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await AxiosInstance({
-  //       method: "POST",
-  //       url: seller.login_api,
-  //       data,
-  //     });
-
-  //     if (response.status === 200) {
-  //       toast.success("Welcome! You have logged in successfully.");
-  //       navigate(seller.profile_route);
-  //     }
-  //   } catch (error) {
-  //     if (error.response) {
-  //       toast.error(
-  //         error.response.data.error ||
-  //           "Invalid login credentials. Please try again."
-  //       );
-  //     } else {
-  //       toast.error(
-  //         "Network error. Please check your connection and try again."
-  //       );
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const onSubmit = async (data) => {
-  setLoading(true);
-  try {
-    const response = await AxiosInstance({
-      method: "POST",
-      url: seller.login_api,
-      data,
-    });
+    setLoading(true);
+    try {
+      const response = await AxiosInstance({
+        method: "POST",
+        url: seller.login_api,
+        data,
+      });
 
-    if (response.status === 200) {
-      localStorage.setItem("token", response.data.token);
-      toast.success("Welcome! You have logged in successfully.");
-      window.location.href = seller.profile_route;
+      if (response.status === 200) {
+        toast.success("Welcome! You have logged in successfully.");
+        navigate(seller.profile_route);
+      }
+    } catch (error) {
+      if (error.response) {
+        toast.error(
+          error.response.data.error ||
+            "Invalid login credentials. Please try again."
+        );
+      } else {
+        toast.error(
+          "Network error. Please check your connection and try again."
+        );
+      }
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Login Error:", error);
-    if (error.response) {
-      toast.error(
-        error.response.data.error || "Invalid login credentials. Please try again."
-      );
-    } else {
-      toast.error("Network error. Please check your connection and try again.");
-    }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div>
