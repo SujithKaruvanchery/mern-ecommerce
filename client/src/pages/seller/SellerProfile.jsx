@@ -32,17 +32,35 @@ function SellerProfile() {
     }
   };
 
+  // const handleLogout = async () => {
+  //   try {
+  //     await AxiosInstance.get("/seller/logout");
+  //     toast.success("Logged out successfully");
+  //     navigate("/seller");
+  //   } catch (error) {
+  //     toast.error(error.response?.data?.message || "Logout failed");
+  //   } finally {
+  //     setIsLogoutModalOpen(false);
+  //   }
+  // };
+
   const handleLogout = async () => {
     try {
-      await AxiosInstance.get("/seller/logout");
+      await AxiosInstance.get("/seller/logout", { withCredentials: true }); // make sure this endpoint is correct
+  
+      localStorage.removeItem("seller_token"); // use correct token key for seller
+      sessionStorage.clear();
+  
       toast.success("Logged out successfully");
-      navigate("/seller");
+  
+      navigate("/seller/login");
+      window.location.reload();
     } catch (error) {
       toast.error(error.response?.data?.message || "Logout failed");
     } finally {
       setIsLogoutModalOpen(false);
     }
-  };
+  };  
 
   return (
     <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
