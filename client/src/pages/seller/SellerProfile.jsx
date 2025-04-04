@@ -44,43 +44,21 @@ function SellerProfile() {
   //   }
   // };
 
-  // const handleLogout = async () => {
-  //   try {
-  //     await AxiosInstance.get("/seller/logout", { withCredentials: true });
-  
-  //     localStorage.removeItem("seller_token");
-  //     sessionStorage.clear();
-  
-  //     toast.success("Logged out successfully");
-  
-  //     navigate("/seller/login");
-  //     window.location.reload();
-  //   } catch (error) {
-  //     toast.error(error.response?.data?.message || "Logout failed");
-  //   } finally {
-  //     setIsLogoutModalOpen(false);
-  //   }
-  // };  
-
   const handleLogout = async () => {
     try {
-        console.log("Logout function triggered");
-        const response = await AxiosInstance.get("/seller/logout", { withCredentials: true });
+      await AxiosInstance.get("/seller/logout", { withCredentials: true });
 
-        console.log("Logout response:", response);
-        localStorage.removeItem("seller_token");
-        sessionStorage.clear();
+      localStorage.removeItem("seller_token");
+      sessionStorage.removeItem("seller_token");
 
-        toast.success("Logged out successfully");
-        navigate("/seller/login");
-        window.location.reload();
+      toast.success("Logged out successfully");
+      navigate("/seller");
     } catch (error) {
-        console.error("Logout error:", error);
-        toast.error(error.response?.data?.message || "Logout failed");
+      toast.error(error.response?.data?.message || "Logout failed");
     } finally {
-        setIsLogoutModalOpen(false);
+      setIsLogoutModalOpen(false);
     }
-};
+  };
 
   return (
     <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
