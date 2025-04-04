@@ -32,25 +32,9 @@ function SellerProfile() {
     }
   };
 
-  // const handleLogout = async () => {
-  //   try {
-  //     await AxiosInstance.get("/seller/logout");
-  //     toast.success("Logged out successfully");
-  //     navigate("/seller");
-  //   } catch (error) {
-  //     toast.error(error.response?.data?.message || "Logout failed");
-  //   } finally {
-  //     setIsLogoutModalOpen(false);
-  //   }
-  // };
-
   const handleLogout = async () => {
     try {
-      await AxiosInstance.get("/seller/logout", { withCredentials: true });
-
-      localStorage.removeItem("seller_token");
-      sessionStorage.removeItem("seller_token");
-
+      await AxiosInstance.get("/seller/logout");
       toast.success("Logged out successfully");
       navigate("/seller");
     } catch (error) {
