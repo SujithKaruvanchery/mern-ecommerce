@@ -182,11 +182,9 @@ function Login() {
       });
 
       if (response.status === 200) {
-        // Store token before navigation
         localStorage.setItem("token", response.data.token);
         toast.success("Welcome! You have logged in successfully.");
-        
-        // Ensure re-render after setting token
+
         window.location.href = user.profile_route;
       }
     } catch (error) {
@@ -197,7 +195,9 @@ function Login() {
             "Invalid login credentials. Please try again."
         );
       } else {
-        toast.error("Network error. Please check your connection and try again.");
+        toast.error(
+          "Network error. Please check your connection and try again."
+        );
       }
     }
   };
@@ -210,12 +210,11 @@ function Login() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form
-            className="space-y-6"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
-              <label htmlFor="email" className="block">Email address</label>
+              <label htmlFor="email" className="block">
+                Email address
+              </label>
               <div className="mt-2">
                 <input
                   id="email"
@@ -228,18 +227,25 @@ function Login() {
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
-                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                      value:
+                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                       message: "Enter a valid email address",
                     },
                   })}
-                  onChange={(e) => (e.target.value = e.target.value.toLowerCase())}
+                  onChange={(e) =>
+                    (e.target.value = e.target.value.toLowerCase())
+                  }
                 />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                )}
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block">Password</label>
+              <label htmlFor="password" className="block">
+                Password
+              </label>
               <div className="mt-2">
                 <input
                   id="password"
@@ -257,7 +263,11 @@ function Login() {
                     },
                   })}
                 />
-                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                {errors.password && (
+                  <p className="text-red-500 text-sm">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -273,9 +283,7 @@ function Login() {
 
           <div className="mt-2">
             <Link to={user.signup_route}>
-              <button
-                className="flex w-full justify-center bg-white px-3 py-1.5 text-black shadow-sm hover:bg-gray-100 outline outline-1 outline-gray-500"
-              >
+              <button className="flex w-full justify-center bg-white px-3 py-1.5 text-black shadow-sm hover:bg-gray-100 outline outline-1 outline-gray-500">
                 Create Account
               </button>
             </Link>
