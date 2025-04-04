@@ -45,22 +45,44 @@ function Profile() {
   //   }
   // };
 
-  const handleLogout = async () => {
-    try {
-        await AxiosInstance.get("/user/logout", { withCredentials: true });
+//   const handleLogout = async () => {
+//     try {
+//         await AxiosInstance.get("/user/logout", { withCredentials: true });
 
-        localStorage.removeItem("user_token");  
-        sessionStorage.clear();
+//         localStorage.removeItem("user_token");  
+//         sessionStorage.clear();
 
-        toast.success("Logged out successfully");
+//         toast.success("Logged out successfully");
         
-        navigate("/login");
-        window.location.reload();  
-    } catch (error) {
-        toast.error(error.response?.data?.message || "Logout failed");
-    } finally {
-        setIsLogoutModalOpen(false);
-    }
+//         navigate("/login");
+//         window.location.reload();  
+//     } catch (error) {
+//         toast.error(error.response?.data?.message || "Logout failed");
+//     } finally {
+//         setIsLogoutModalOpen(false);
+//     }
+// };
+
+const handleLogout = async () => {
+  try {
+      await AxiosInstance.get("/user/logout", { withCredentials: true });
+
+      // Clear token from local storage and session storage
+      localStorage.removeItem("user_token");  
+      sessionStorage.clear();
+
+      toast.success("Logged out successfully");
+
+      // Navigate to login page and reload to ensure cookies are cleared
+      navigate("/login");
+      setTimeout(() => {
+          window.location.reload();  
+      }, 500);
+  } catch (error) {
+      toast.error(error.response?.data?.message || "Logout failed");
+  } finally {
+      setIsLogoutModalOpen(false);
+  }
 };
 
   return (
