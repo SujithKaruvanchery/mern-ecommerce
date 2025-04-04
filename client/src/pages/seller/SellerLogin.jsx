@@ -182,31 +182,60 @@ function SellerLogin() {
     signup_route: "/seller/signup",
   };
 
+  // const onSubmit = async (data) => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await AxiosInstance({
+  //       method: "POST",
+  //       url: seller.login_api,
+  //       data,
+  //       withCredentials: true,
+  //     });
+
+  //     if (response.status === 200) {
+  //       toast.success("Welcome! You have logged in successfully.");
+  //       navigate(seller.profile_route);
+  //       setTimeout(() => {
+  //         window.location.href = seller.profile_route;
+  //       }, 500);
+  //     }
+  //   } catch (error) {
+  //     if (error.response) {
+  //       toast.error(error.response.data.error || "Invalid login credentials.");
+  //     } else {
+  //       toast.error("Network error. Please check your connection.");
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const onSubmit = async (data) => {
-    setLoading(true);
     try {
       const response = await AxiosInstance({
         method: "POST",
         url: seller.login_api,
         data,
-        withCredentials: true,
       });
 
       if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
         toast.success("Welcome! You have logged in successfully.");
-        navigate(seller.profile_route);
-        setTimeout(() => {
-          window.location.href = seller.profile_route;
-        }, 500);
+
+        window.location.href = seller.profile_route;
       }
     } catch (error) {
+      console.error("Login Error:", error);
       if (error.response) {
-        toast.error(error.response.data.error || "Invalid login credentials.");
+        toast.error(
+          error.response.data.error ||
+            "Invalid login credentials. Please try again."
+        );
       } else {
-        toast.error("Network error. Please check your connection.");
+        toast.error(
+          "Network error. Please check your connection and try again."
+        );
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -220,7 +249,9 @@ function SellerLogin() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
-              <label htmlFor="email" className="block">Email address</label>
+              <label htmlFor="email" className="block">
+                Email address
+              </label>
               <div className="mt-2">
                 <input
                   id="email"
@@ -233,21 +264,31 @@ function SellerLogin() {
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
-                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                      value:
+                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                       message: "Enter a valid email address",
                     },
                   })}
-                  onChange={(e) => (e.target.value = e.target.value.toLowerCase())}
+                  onChange={(e) =>
+                    (e.target.value = e.target.value.toLowerCase())
+                  }
                 />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                )}
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block">Password</label>
+                <label htmlFor="password" className="block">
+                  Password
+                </label>
                 <div className="text-sm">
-                  <Link to={"/seller/forgot-password"} className="font-semibold">
+                  <Link
+                    to={"/seller/forgot-password"}
+                    className="font-semibold"
+                  >
                     Forgot password?
                   </Link>
                 </div>
@@ -269,7 +310,11 @@ function SellerLogin() {
                     },
                   })}
                 />
-                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                {errors.password && (
+                  <p className="text-red-500 text-sm">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
             </div>
 
