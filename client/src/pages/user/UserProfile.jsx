@@ -49,8 +49,8 @@ function Profile() {
     try {
         await AxiosInstance.get("/user/logout", { withCredentials: true });
 
-        localStorage.removeItem("user_token");  
-        sessionStorage.clear();
+        // localStorage.removeItem("user_token");  
+        // sessionStorage.clear();
 
         toast.success("Logged out successfully");
         
