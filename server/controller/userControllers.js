@@ -70,6 +70,7 @@ const loginUser = async (req, res) => {
             sameSite: "None",
             secure: true,
             httpOnly: true,
+            path: "/"
         });
 
         {
