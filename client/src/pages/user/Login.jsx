@@ -183,10 +183,8 @@ function Login() {
       });
 
       if (response.status === 200) {
-        localStorage.setItem("token", response.data.token);
         toast.success("Welcome! You have logged in successfully.");
-
-        window.location.href = user.profile_route;
+        navigate(user.profile_route);
       }
     } catch (error) {
       console.error("Login Error:", error);
