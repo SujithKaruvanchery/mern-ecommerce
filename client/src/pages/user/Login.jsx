@@ -184,7 +184,8 @@ function Login() {
 
       if (response.status === 200) {
         toast.success("Welcome! You have logged in successfully.");
-        navigate(user.profile_route);
+        // navigate(user.profile_route);
+        window.location.href = user.profile_route;
       }
     } catch (error) {
       console.error("Login Error:", error);
