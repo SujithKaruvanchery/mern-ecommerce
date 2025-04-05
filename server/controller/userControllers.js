@@ -70,7 +70,6 @@ const loginUser = async (req, res) => {
             sameSite: "None",
             secure: true,
             httpOnly: true,
-            path: "/"
         });
 
         {
@@ -123,7 +122,6 @@ const logoutUser = async (req, res) => {
             sameSite: "None",
             secure: true,
             httpOnly: true,
-            path: "/"
         });
         console.log("Cleared cookie");
         console.log("Cookies before clearing:", req.cookies);
