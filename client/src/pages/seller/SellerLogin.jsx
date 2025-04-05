@@ -30,7 +30,8 @@ function SellerLogin() {
 
       if (response.status === 200) {
         toast.success("Welcome! You have logged in successfully.");
-        navigate(seller.profile_route);
+        // navigate(seller.profile_route);
+        window.location.href = seller.profile_route;
       }
     } catch (error) {
       if (error.response) {

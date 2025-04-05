@@ -28,7 +28,8 @@ function AdminLogin() {
 
       if (response.status === 200) {
         toast.success("Welcome, Admin! You have logged in successfully.");
-        navigate(admin.profile_route);
+        // navigate(admin.profile_route);
+        window.location.href = admin.profile_route;
       }
     } catch (error) {
       if (error.response) {
