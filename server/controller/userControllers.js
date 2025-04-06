@@ -125,9 +125,6 @@ const logoutUser = async (req, res) => {
             secure: NODE_ENV === "production",
             httpOnly: NODE_ENV === "production",
         });
-        
-        console.log("Cleared cookie");
-        console.log("Cookies before clearing:", req.cookies);
 
         res.status(200).json({ message: 'Successfully logged out user', data: user });
     } catch (error) {
