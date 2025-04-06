@@ -41,48 +41,48 @@ const registerUser = async (req, res) => {
     }
 };
 
-const loginUser = async (req, res) => {
-    try {
-        const { email, password } = req.body;
+// const loginUser = async (req, res) => {
+//     try {
+//         const { email, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(422).json({ error: 'All fields must be filled out.' });
-        }
+//         if (!email || !password) {
+//             return res.status(422).json({ error: 'All fields must be filled out.' });
+//         }
 
-        const user = await UserDB.findOne({ email });
+//         const user = await UserDB.findOne({ email });
 
-        if (!user) {
-            return res.status(404).json({ error: 'This email is not registered.' });
-        }
+//         if (!user) {
+//             return res.status(404).json({ error: 'This email is not registered.' });
+//         }
 
-        const passwordMatch = await bcrypt.compare(password, user.password);
+//         const passwordMatch = await bcrypt.compare(password, user.password);
 
-        if (!passwordMatch) {
-            return res.status(401).json({ error: 'Password is incorrect.' });
-        }
+//         if (!passwordMatch) {
+//             return res.status(401).json({ error: 'Password is incorrect.' });
+//         }
 
-        if (!user.isActive) {
-            return res.status(403).json({ error: 'The user account is inactive.' });
-        }
+//         if (!user.isActive) {
+//             return res.status(403).json({ error: 'The user account is inactive.' });
+//         }
 
-        const token = generateToken(user, "user");
+//         const token = generateToken(user, "user");
 
-        res.cookie("user_token", token, {
-            sameSite: NODE_ENV === "production" ? "None" : "Lax",
-            secure: NODE_ENV === "production",
-            httpOnly: NODE_ENV === "production",
-        });
+//         res.cookie("user_token", token, {
+//             sameSite: NODE_ENV === "production" ? "None" : "Lax",
+//             secure: NODE_ENV === "production",
+//             httpOnly: NODE_ENV === "production",
+//         });
 
-        {
-            const { password, ...userWithoutPassword } = user._doc
-            res.status(200).json({ message: 'Successfully logged in.', data: userWithoutPassword });
-        }
+//         {
+//             const { password, ...userWithoutPassword } = user._doc
+//             res.status(200).json({ message: 'Successfully logged in.', data: userWithoutPassword });
+//         }
 
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error.message || 'Internal Server Error' });
-    }
-};
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
 
 const userProfile = async (req, res) => {
     try {
@@ -105,34 +105,34 @@ const userProfile = async (req, res) => {
     }
 };
 
-const logoutUser = async (req, res) => {
-    try {
-        const userId = req.user.id;
+// const logoutUser = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
 
-        const user = await UserDB.findById(userId);
+//         const user = await UserDB.findById(userId);
 
-        if (!user) {
-            return res.status(404).json({ error: 'User not found in the system.' });
-        }
+//         if (!user) {
+//             return res.status(404).json({ error: 'User not found in the system.' });
+//         }
 
-        if (!user.isActive) {
-            return res.status(403).json({ error: 'The user account is inactive.' });
-        }
+//         if (!user.isActive) {
+//             return res.status(403).json({ error: 'The user account is inactive.' });
+//         }
 
-        res.clearCookie('user_token', {
-            sameSite: NODE_ENV === "production" ? "None" : "Lax",
-            secure: NODE_ENV === "production",
-            httpOnly: NODE_ENV === "production",
-        });
-        console.log("Cleared cookie");
-        console.log("Cookies before clearing:", req.cookies);
+//         res.clearCookie('user_token', {
+//             sameSite: NODE_ENV === "production" ? "None" : "Lax",
+//             secure: NODE_ENV === "production",
+//             httpOnly: NODE_ENV === "production",
+//         });
+//         console.log("Cleared cookie");
+//         console.log("Cookies before clearing:", req.cookies);
 
-        res.status(200).json({ message: 'Successfully logged out user', data: user });
-    } catch (error) {
-        console.log(error);
-        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
-    }
-};
+//         res.status(200).json({ message: 'Successfully logged out user', data: user });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+//     }
+// };
 
 const checkUser = async (req, res) => {
     try {
@@ -367,5 +367,106 @@ const resetPassword = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+const loginUser = async (req, res) => {
+    try {
+        console.log("Login route hit");
+        console.log("Request body:", req.body);
+
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            console.log("Missing email or password");
+            return res.status(422).json({ error: 'All fields must be filled out.' });
+        }
+
+        const user = await UserDB.findOne({ email });
+        console.log("User fetched from DB:", user);
+
+        if (!user) {
+            console.log("No user found with this email:", email);
+            return res.status(404).json({ error: 'This email is not registered.' });
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        console.log("Password match status:", passwordMatch);
+
+        if (!passwordMatch) {
+            console.log("Incorrect password for user:", email);
+            return res.status(401).json({ error: 'Password is incorrect.' });
+        }
+
+        if (!user.isActive) {
+            console.log("User is inactive:", email);
+            return res.status(403).json({ error: 'The user account is inactive.' });
+        }
+
+        const token = generateToken(user, "user");
+        console.log("Generated JWT token:", token);
+
+        // Set cookie
+        res.cookie("user_token", token, {
+            sameSite: NODE_ENV === "production" ? "None" : "Lax",
+            secure: NODE_ENV === "production",
+            httpOnly: NODE_ENV === "production",
+        });
+
+        console.log("Cookie set successfully");
+        console.log("Cookies after setting:", req.cookies);
+
+        const { password, ...userWithoutPassword } = user._doc;
+        res.status(200).json({ message: 'Successfully logged in.', data: userWithoutPassword });
+
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+const logoutUser = async (req, res) => {
+    try {
+        console.log("Logout route hit");
+        console.log("Request cookies:", req.cookies);
+
+        const userId = req.user?.id;
+        console.log("User ID from request:", userId);
+
+        if (!userId) {
+            console.log("No user ID found in request");
+            return res.status(401).json({ error: 'User not authenticated.' });
+        }
+
+        const user = await UserDB.findById(userId);
+        console.log("User fetched from DB:", user);
+
+        if (!user) {
+            console.log("User not found in DB");
+            return res.status(404).json({ error: 'User not found in the system.' });
+        }
+
+        if (!user.isActive) {
+            console.log("User is inactive");
+            return res.status(403).json({ error: 'The user account is inactive.' });
+        }
+
+        // Logging before clearing cookie
+        console.log("Clearing cookie 'user_token'");
+        res.clearCookie('user_token', {
+            sameSite: NODE_ENV === "production" ? "None" : "Lax",
+            secure: NODE_ENV === "production",
+            httpOnly: NODE_ENV === "production",
+        });
+
+        // Log to verify
+        console.log("Cookie cleared (check browser dev tools to confirm)");
+
+        res.status(200).json({ message: 'Successfully logged out user', data: user });
+    } catch (error) {
+        console.error("Logout error:", error);
+        res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
+
 
 module.exports = { registerUser, loginUser, userProfile, logoutUser, checkUser, updateUserProfile, deactivateUser, activateUser, deleteUser, getAllUsers, forgotPassword, resetPassword };
