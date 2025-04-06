@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const { generateToken } = require('../utils/token');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const NODE_ENV = process.env.NODE_ENV;
+const NODE_ENV = process.env.NODE_ENV || "development";
 
 const registerUser = async (req, res) => {
     try {
