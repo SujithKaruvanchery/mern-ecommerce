@@ -4,7 +4,8 @@ const bcrypt = require('bcryptjs');
 const { generateToken } = require('../utils/token');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-// const NODE_ENV = process.env.NODE_ENV || "development";
+const NODE_ENV = process.env.NODE_ENV || "development";
+
 
 const registerUser = async (req, res) => {
     try {
@@ -67,19 +68,11 @@ const loginUser = async (req, res) => {
 
         const token = generateToken(user, "user");
 
-        // res.cookie("user_token", token, {
-        //     sameSite: NODE_ENV === "production" ? "None" : "Lax",
-        //     secure: NODE_ENV === "production",
-        //     httpOnly: NODE_ENV === "production",
-        // });
-
         res.cookie("user_token", token, {
-            sameSite: "None",
-            secure: true,
-            httpOnly: true,
-            domain: ".vercel.app", // 👈 add this
-            path: "/"
-          });
+            sameSite: NODE_ENV === "production" ? "None" : "Lax",
+            secure: NODE_ENV === "production",
+            httpOnly: NODE_ENV === "production",
+        });
 
         {
             const { password, ...userWithoutPassword } = user._doc
@@ -127,20 +120,12 @@ const logoutUser = async (req, res) => {
             return res.status(403).json({ error: 'The user account is inactive.' });
         }
 
-        // res.clearCookie('user_token', {
-        //     sameSite: NODE_ENV === "production" ? "None" : "Lax",
-        //     secure: NODE_ENV === "production",
-        //     httpOnly: NODE_ENV === "production",
-        // });
-
-        res.clearCookie("user_token", {
-            sameSite: "None",
-            secure: true,
-            httpOnly: true,
-            domain: ".vercel.app", // 👈 must match
-            path: "/"
-          });
-          
+        res.clearCookie('user_token', {
+            sameSite: NODE_ENV === "production" ? "None" : "Lax",
+            secure: NODE_ENV === "production",
+            httpOnly: NODE_ENV === "production",
+        });
+        
         console.log("Cleared cookie");
         console.log("Cookies before clearing:", req.cookies);
 
