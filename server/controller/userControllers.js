@@ -68,9 +68,12 @@ const loginUser = async (req, res) => {
         const token = generateToken(user, "user");
 
         res.cookie("user_token", token, {
-            sameSite: NODE_ENV === "production" ? "None" : "Lax",
-            secure: NODE_ENV === "production",
-            httpOnly: NODE_ENV === "production",
+            // sameSite: NODE_ENV === "production" ? "None" : "Lax",
+            // secure: NODE_ENV === "production",
+            // httpOnly: NODE_ENV === "production",
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
         });
 
         {
@@ -120,9 +123,12 @@ const logoutUser = async (req, res) => {
         }
 
         res.clearCookie('user_token', {
-            sameSite: NODE_ENV === "production" ? "None" : "Lax",
-            secure: NODE_ENV === "production",
-            httpOnly: NODE_ENV === "production",
+            // sameSite: NODE_ENV === "production" ? "None" : "Lax",
+            // secure: NODE_ENV === "production",
+            // httpOnly: NODE_ENV === "production",
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
         });
         console.log("Cleared cookie");
         console.log("Cookies before clearing:", req.cookies);
