@@ -43,35 +43,46 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
+        console.log("Login route hit");
+        console.log("Request body:", req.body);
         const { email, password } = req.body;
 
         if (!email || !password) {
+            console.log("Missing email or password");
             return res.status(422).json({ error: 'All fields must be filled out.' });
         }
 
         const user = await UserDB.findOne({ email });
+        console.log("User fetched from DB:", user);
 
         if (!user) {
+            console.log("No user found with this email:", email);
             return res.status(404).json({ error: 'This email is not registered.' });
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
+        console.log("Password match status:", passwordMatch);
 
         if (!passwordMatch) {
+            console.log("Incorrect password for user:", email);
             return res.status(401).json({ error: 'Password is incorrect.' });
         }
 
         if (!user.isActive) {
+            console.log("User is inactive:", email);
             return res.status(403).json({ error: 'The user account is inactive.' });
         }
 
         const token = generateToken(user, "user");
+        console.log("Generated JWT token:", token);
 
         res.cookie("user_token", token, {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production",
             httpOnly: NODE_ENV === "production",
         });
+        console.log("Cookie set successfully");
+        console.log("Cookies after setting:", req.cookies);
 
         {
             const { password, ...userWithoutPassword } = user._doc
@@ -107,15 +118,22 @@ const userProfile = async (req, res) => {
 
 const logoutUser = async (req, res) => {
     try {
+        console.log("Logout endpoint hit");
+        console.log("Request user ID:", req.user?.id);
+        console.log("Cookies before clearing:", req.cookies);
+
         const userId = req.user.id;
 
         const user = await UserDB.findById(userId);
+        console.log("Fetched user from DB:", user);
 
         if (!user) {
+            console.log("User not found");
             return res.status(404).json({ error: 'User not found in the system.' });
         }
 
         if (!user.isActive) {
+            console.log("User is inactive");
             return res.status(403).json({ error: 'The user account is inactive.' });
         }
 
