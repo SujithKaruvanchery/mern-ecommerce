@@ -71,7 +71,6 @@ const loginUser = async (req, res) => {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production",
             httpOnly: NODE_ENV === "production",
-            path: "/",
         });
 
         {
@@ -124,7 +123,6 @@ const logoutUser = async (req, res) => {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production",
             httpOnly: NODE_ENV === "production",
-            path: "/",
         });
         console.log("Cleared cookie");
         console.log("Cookies before clearing:", req.cookies);
