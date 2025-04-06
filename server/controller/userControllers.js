@@ -46,27 +46,48 @@ const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        console.log('Received email and password:', { email, password });
+
         if (!email || !password) {
+
+            console.log('Missing email or password');
+
             return res.status(422).json({ error: 'All fields must be filled out.' });
         }
 
         const user = await UserDB.findOne({ email });
 
         if (!user) {
+
+            console.log(`User not found for email: ${email}`);
+
             return res.status(404).json({ error: 'This email is not registered.' });
         }
+
+        console.log(`User found for email: ${email}, checking password...`);
 
         const passwordMatch = await bcrypt.compare(password, user.password);
 
         if (!passwordMatch) {
+
+            console.log('Password mismatch');
+
             return res.status(401).json({ error: 'Password is incorrect.' });
         }
 
         if (!user.isActive) {
+
+            console.log('User account is inactive');
+
             return res.status(403).json({ error: 'The user account is inactive.' });
         }
 
+        console.log('Password matched, generating token...');
+
         const token = generateToken(user, "user");
+
+        console.log('Token generated:', token);
+
 
         res.cookie("user_token", token, {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
@@ -76,6 +97,9 @@ const loginUser = async (req, res) => {
 
         {
             const { password, ...userWithoutPassword } = user._doc
+
+            console.log('Sending response with user data:', userWithoutPassword);
+            
             res.status(200).json({ message: 'Successfully logged in.', data: userWithoutPassword });
         }
 
