@@ -67,7 +67,7 @@ const loginUser = async (req, res) => {
 
         const token = generateToken(user, "user");
 
-        res.cookie("user_token", token, {
+        res.cookie("user_token", "", {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production",
             httpOnly: NODE_ENV === "production",
@@ -124,7 +124,7 @@ const logoutUser = async (req, res) => {
             secure: NODE_ENV === "production",
             httpOnly: NODE_ENV === "production",
         });
-        
+
         console.log("Cleared cookie");
         console.log("Cookies before clearing:", req.cookies);
 
