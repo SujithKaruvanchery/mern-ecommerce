@@ -89,7 +89,7 @@ const loginUser = async (req, res) => {
         console.log('Token generated:', token);
 
 
-        res.cookie("token", token, {
+        res.cookie("user_token", token, {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production",
             httpOnly: NODE_ENV === "production",
@@ -154,7 +154,7 @@ const logoutUser = async (req, res) => {
 
         console.log('User found and account is active, logging out...');
 
-        res.clearCookie('token', {
+        res.clearCookie('user_token', {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production",
             httpOnly: NODE_ENV === "production",

@@ -2,13 +2,13 @@ const jwt = require('jsonwebtoken');
 
 const userAuth = (req, res, next) => {
     try {
-        const { token } = req.cookies;
+        const { user_token } = req.cookies;
 
-        if (!token) {
+        if (!user_token) {
             return res.status(401).json({ error: 'No token provided by user' });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(user_token, process.env.JWT_SECRET);
 
         if (!decoded) {
             return res.status(401).json({ error: 'User is not authorized' });
