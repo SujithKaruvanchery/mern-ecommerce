@@ -158,6 +158,7 @@ const logoutUser = async (req, res) => {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production",
             httpOnly: NODE_ENV === "production",
+            expires: new Date(0)
         });
 
         console.log('Cookie cleared successfully');
