@@ -34,9 +34,10 @@ function AdminProfile() {
 
   const handleLogout = async () => {
     try {
-      await AxiosInstance.get("/admin/logout");
+      await AxiosInstance.post("/admin/logout");
       toast.success("Logged out successfully");
-      navigate("/admin");
+      // navigate("/admin");
+      window.location.href = "/admin";
     } catch (error) {
       toast.error(error.response?.data?.message || "Logout failed");
     } finally {
