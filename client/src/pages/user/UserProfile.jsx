@@ -47,7 +47,7 @@ function Profile() {
 
   const handleLogout = async () => {
     try {
-      await AxiosInstance.get("/user/logout", { withCredentials: true });
+      await AxiosInstance.post("/user/logout", { withCredentials: true });
 
       toast.success("Logged out successfully");
 
