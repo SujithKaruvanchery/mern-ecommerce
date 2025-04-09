@@ -53,6 +53,7 @@ import SellerContact from "../pages/seller/SellerContact";
 import AdminAbout from "../pages/admin/AdminAbout";
 import AdminContact from "../pages/admin/AdminContact";
 import UpdateSellerProfile from "../pages/seller/UpdateSellerProfile";
+import AdminHome from "../pages/admin/AdminHome";
 
 export const router = createBrowserRouter([
   {
@@ -117,6 +118,7 @@ export const router = createBrowserRouter([
     element: <AdminLayout />,
     errorElement: <ErrorPage />,
     children: [
+      {path: "", element: <AdminHome/>},
       { path: "login", element: <AdminLogin /> },
       { path: "signup", element: <AdminSignup /> },
       { path: "about", element: <AdminAbout /> },

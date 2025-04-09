@@ -30,7 +30,7 @@ function UnauthorizedHeader() {
           </Link>
         </div>
         <div className="hidden sm:flex space-x-6 items-center">
-          <Link to="admin/login" className="link link-hover uppercase">
+          <Link to="/admin/login" className="link link-hover uppercase">
             Login
           </Link>
           <div className="flex items-center">
