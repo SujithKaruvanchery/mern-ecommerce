@@ -92,7 +92,6 @@ const loginUser = async (req, res) => {
         res.cookie("user_token", token, {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production",
-            // httpOnly: NODE_ENV === "production",
             httpOnly: true,
         });
 
@@ -158,7 +157,6 @@ const logoutUser = async (req, res) => {
         res.clearCookie('user_token', {
             sameSite: NODE_ENV === "production" ? "None" : "Lax",
             secure: NODE_ENV === "production",
-            // httpOnly: NODE_ENV === "production",
             httpOnly: true,
         });
 
