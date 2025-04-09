@@ -34,9 +34,10 @@ function SellerProfile() {
 
   const handleLogout = async () => {
     try {
-      await AxiosInstance.get("/seller/logout");
+      await AxiosInstance.post("/seller/logout");
       toast.success("Logged out successfully");
-      navigate("/seller");
+      // navigate("/seller");
+      window.location.href = "/seller";
     } catch (error) {
       toast.error(error.response?.data?.message || "Logout failed");
     } finally {
