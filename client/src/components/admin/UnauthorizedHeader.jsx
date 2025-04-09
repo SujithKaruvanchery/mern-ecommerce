@@ -10,7 +10,7 @@ function UnauthorizedHeader() {
   };
 
   return (
-    <div className="p-4 text-xs font-medium">
+    <div className="p-2 text-xs font-medium">
       <div className="max-w-screen-xl mx-auto flex justify-between items-center">
         <div className="hidden sm:flex space-x-6">
           <Link to="/admin/about" className="link link-hover uppercase">
