@@ -51,7 +51,8 @@ function Profile() {
 
       toast.success("Logged out successfully");
 
-      navigate("/login");
+      // navigate("/login");
+      window.location.href = "/login";
     } catch (error) {
       toast.error(error.response?.data?.message || "Logout failed");
     } finally {
