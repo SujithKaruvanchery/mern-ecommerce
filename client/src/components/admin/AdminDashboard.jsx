@@ -45,25 +45,25 @@ const AdminDashboard = () => {
         <h2 className="text-xl font-bold">Admin Dashboard</h2>
         <nav className="space-y-3">
           <Link
-            to="get-all-users"
+            to="/admin/get-all-users"
             className="block p-2 hover:bg-gray-300 rounded transition duration-200"
           >
             Manage Users
           </Link>
           <Link
-            to="get-all-sellers"
+            to="/admin/get-all-sellers"
             className="block p-2 hover:bg-gray-300 rounded transition duration-200"
           >
             Manage Sellers
           </Link>
           <Link
-            to="get-all-orders"
+            to="/admin/get-all-orders"
             className="block p-2 hover:bg-gray-300 rounded transition duration-200"
           >
             View Orders
           </Link>
           <Link
-            to="products"
+            to="/admin/products"
             className="block p-2 hover:bg-gray-300 rounded transition duration-200"
           >
             Manage Products
