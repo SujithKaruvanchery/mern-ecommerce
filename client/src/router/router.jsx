@@ -128,7 +128,7 @@ export const router = createBrowserRouter([
       {
         element: <ProtectedRouteAdmin />,
         children: [
-          { path: "", element: <AdminDashboard /> },
+          { path: "dashboard", element: <AdminDashboard /> },
           { path: "profile", element: <AdminProfile /> },
           { path: "update-profile", element: <UpdateAdminProfile /> },
           { path: "get-all-users", element: <GetAllUsers /> },

@@ -21,7 +21,7 @@ function AuthorizedHeader() {
           </Link>
         </div>
         <div className="flex justify-center sm:justify-start w-24">
-          <Link to="/admin">
+          <Link to="/admin/dashboard">
             <img
               src="https://cdn.worldvectorlogo.com/logos/mango-4.svg"
               alt="Mango Logo"
