@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { AxiosInstance } from "../../config/AxiosInstance";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { saveAdmin } from "../../redux/features/adminSlice";
 
 function AdminLogin() {
   const {
@@ -11,6 +13,7 @@ function AdminLogin() {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+   const dispatch = useDispatch();
 
   const admin = {
     login_api: "/admin/login",
@@ -27,6 +30,7 @@ function AdminLogin() {
       });
 
       if (response.status === 200) {
+        dispatch(saveAdmin(response.data));
         toast.success("Welcome, Admin! You have logged in successfully.");
         navigate(admin.profile_route);
       }
