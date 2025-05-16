@@ -16,7 +16,7 @@ productRouter.get('/get-new-arrivals', productNewArrival);
 productRouter.get('/total-products', sellerAuth, getTotalProductCount);
 productRouter.post('/update-stock', sellerAuth, updateProductStock);
 productRouter.post('/update-product-by-admin/:id', adminAuth, updateProductByAdmin);
-productRouter.delete('/delete-product-by-admin/:id', sellerAuth, deleteProductByAdmin)
+productRouter.delete('/delete-product-by-admin/:id', adminAuth, deleteProductByAdmin)
 productRouter.get('/seller/products', sellerAuth, getSellerProducts)
 
 module.exports = productRouter
