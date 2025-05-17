@@ -67,7 +67,8 @@ const getAllOrdersBySeller = async (req, res) => {
             .populate('userId', 'name email');
 
         const sellerOrders = orders.filter(order =>
-            order.items.some(item => item.productId.seller?._id.toString() === sellerId)
+            // order.items.some(item => item.productId.seller?._id.toString() === sellerId)
+            order.items.some(item => item.productId && item.productId.seller?._id.toString() === sellerId)
         );
 
         console.log("Orders matching seller ID:", sellerOrders);
