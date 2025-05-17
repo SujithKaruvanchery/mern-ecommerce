@@ -136,7 +136,7 @@ const GetAllOrders = () => {
                 )}
               </p>
 
-              {!order.verifiedByAdmin && order.orderStatus !== "Canceled" && (
+              {/* {!order.verifiedByAdmin && order.orderStatus !== "Canceled" && (
                 <div className="mt-3">
                   <button
                     onClick={() =>
@@ -155,7 +155,30 @@ const GetAllOrders = () => {
                     Cancel
                   </button>
                 </div>
-              )}
+              )} */}
+
+              {!order.verifiedByAdmin &&
+                order.orderStatus !== "Canceled" &&
+                order.orderStatus !== "Delivered Successfully" && (
+                  <div className="mt-3">
+                    <button
+                      onClick={() =>
+                        handleAdminVerification(order._id, "Approved")
+                      }
+                      className="bg-blue-500 text-white px-3 py-1 mr-2"
+                    >
+                      Verify
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleAdminVerification(order._id, "Canceled")
+                      }
+                      className="bg-red-500 text-white px-3 py-1"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
             </div>
           ))}
         </div>
