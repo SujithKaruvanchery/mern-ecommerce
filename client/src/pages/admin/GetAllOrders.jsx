@@ -67,7 +67,7 @@ const GetAllOrders = () => {
               Start selling and manage your orders efficiently
             </p>
             <Link to={"/admin"}>
-              <button className="rounded-none py-2 font-light text-sm w-full mt-4">
+              <button className="rounded-none py-2 bg-black text-white font-light text-sm w-full mt-4">
                 Back to Home
               </button>
             </Link>
