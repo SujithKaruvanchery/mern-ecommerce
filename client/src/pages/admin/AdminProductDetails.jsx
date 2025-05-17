@@ -90,7 +90,20 @@ function AdminProductDetails() {
           </div>
         </div>
       ) : (
-        <p className="text-center text-gray-500">No product data found.</p>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <h1 className="mb-4 font-bold text-lg">No Product Data Found</h1>
+            <p className="font-light text-sm">
+              Please try again or go back to the product list.
+            </p>
+            <button
+              onClick={() => navigate("/admin/products")}
+              className="rounded-none py-2 bg-black text-white font-light text-sm w-full mt-4"
+            >
+              Back to Products
+            </button>
+          </div>
+        </div>
       )}
 
       {isModalOpen && (
