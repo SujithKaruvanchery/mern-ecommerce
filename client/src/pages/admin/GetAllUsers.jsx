@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AxiosInstance } from "../../config/AxiosInstance";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const GetAllUsers = () => {
   const [users, setUsers] = useState([]);
@@ -95,7 +96,19 @@ const GetAllUsers = () => {
     <div className="max-w-4xl mx-auto p-4">
       <h1 className="text-center font-bold">All Users</h1>
       {users.length === 0 ? (
-        <p className="text-center">No users found.</p>
+       <div className="flex items-center justify-center h-screen">
+       <div className="text-center">
+         <h1 className="mb-4 font-bold text-lg">No Users Found</h1>
+         <p className="font-light text-sm">
+           Manage your user data efficiently.
+         </p>
+         <Link to={"/admin"}>
+           <button className="rounded-none py-2 bg-black text-white font-light text-sm w-full mt-4">
+             Back to Home
+           </button>
+         </Link>
+       </div>
+     </div>     
       ) : (
         <div className="space-y-4">
           {users.map((user) => (
