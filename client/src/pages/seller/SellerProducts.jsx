@@ -6,6 +6,11 @@ import SellerProductCards from "../../components/seller/SellerProductCards";
 function SellerProducts() {
   const [productList, isLoading, error] = useFetch("/product/seller/products");
 
+  console.log("=======isLoading:", isLoading);
+console.log("=======productList:", productList);
+console.log("=======error:", error);
+
+
   return (
     <div>
       {isLoading ? (
