@@ -168,7 +168,6 @@ const GetAllSellers = () => {
         <div className="space-y-4">
           {sellers.map((seller) => (
             <div key={seller._id} className="shadow-md p-4 border rounded">
-              {/* Removed image here */}
               <div>
                 <h3 className="text-lg font-semibold">{seller.name}</h3>
                 <p className="text-gray-600 mb-2">
