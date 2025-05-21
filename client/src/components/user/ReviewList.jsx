@@ -121,12 +121,75 @@
 
 // export default ReviewList;
 
+// import React from "react";
+// import useFetchReviews from "../../hooks/useFetchReviews";
+// import DeleteReviewButton from "./DeleteReviewButton";
+
+// function ReviewList({ productId }) {
+//   const { reviews, loading, error, setReviews } = useFetchReviews(productId);
+
+//   const renderStars = (rating) => {
+//     return Array.from({ length: 5 }, (_, i) => (
+//       <span
+//         key={i}
+//         className={i < rating ? "text-yellow-500" : "text-gray-300"}
+//       >
+//         &#9733;
+//       </span>
+//     ));
+//   };
+
+//   const handleReviewDeleted = (deletedId) => {
+//     setReviews((prev) => prev.filter((review) => review._id !== deletedId));
+//   };
+
+//   return (
+//     <div className="p-4">
+//       <h3 className="text-sm font-semibold">Customer Reviews</h3>
+
+//       {loading && <p>Loading reviews...</p>}
+//       {error && <p className="text-red-500">{error}</p>}
+//       {reviews.length === 0 && !loading && (
+//         <p className="text-sm dark:text-gray-300">No reviews available.</p>
+//       )}
+
+//       <ul className="mt-2 space-y-3">
+//         {reviews.map((review) => (
+//           <li
+//             key={review._id}
+//             className="p-2 flex justify-between items-start"
+//           >
+//             <div>
+//               <p className="text-sm font-semibold">
+//                 {review.userId?.name || "Anonymous"}
+//               </p>
+//               <div className="flex items-center">{renderStars(review.rating)}</div>
+//               <p className="text-sm">{review.comment}</p>
+//             </div>
+//             <DeleteReviewButton
+//               reviewId={review._id}
+//               onReviewDeleted={handleReviewDeleted}
+//             />
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }
+
+// export default ReviewList;
+
 import React from "react";
 import useFetchReviews from "../../hooks/useFetchReviews";
 import DeleteReviewButton from "./DeleteReviewButton";
+import { useSelector } from "react-redux";
 
 function ReviewList({ productId }) {
   const { reviews, loading, error, setReviews } = useFetchReviews(productId);
+  const { userData } = useSelector((state) => state.user);
+
+  console.log("Logged-in user:", userData);
+  console.log("Reviews:", reviews);
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -140,6 +203,7 @@ function ReviewList({ productId }) {
   };
 
   const handleReviewDeleted = (deletedId) => {
+    console.log("Deleting review with ID:", deletedId);
     setReviews((prev) => prev.filter((review) => review._id !== deletedId));
   };
 
@@ -154,24 +218,34 @@ function ReviewList({ productId }) {
       )}
 
       <ul className="mt-2 space-y-3">
-        {reviews.map((review) => (
-          <li
-            key={review._id}
-            className="p-2 flex justify-between items-start"
-          >
-            <div>
-              <p className="text-sm font-semibold">
-                {review.userId?.name || "Anonymous"}
-              </p>
-              <div className="flex items-center">{renderStars(review.rating)}</div>
-              <p className="text-sm">{review.comment}</p>
-            </div>
-            <DeleteReviewButton
-              reviewId={review._id}
-              onReviewDeleted={handleReviewDeleted}
-            />
-          </li>
-        ))}
+        {reviews.map((review) => {
+          const canDelete = userData?._id === review.userId?._id;
+          console.log(
+            `Review ID: ${review._id}, Review Owner: ${review.userId?._id}, Can delete: ${canDelete}`
+          );
+
+          return (
+            <li
+              key={review._id}
+              className="p-2 flex justify-between items-start"
+            >
+              <div>
+                <p className="text-sm font-semibold">
+                  {review.userId?.name || "Anonymous"}
+                </p>
+                <div className="flex items-center">{renderStars(review.rating)}</div>
+                <p className="text-sm">{review.comment}</p>
+              </div>
+
+              {canDelete && (
+                <DeleteReviewButton
+                  reviewId={review._id}
+                  onReviewDeleted={handleReviewDeleted}
+                />
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
