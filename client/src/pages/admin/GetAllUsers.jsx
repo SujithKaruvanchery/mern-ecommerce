@@ -94,7 +94,7 @@ const GetAllUsers = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-center font-bold">All Users</h1>
+      <h1 className="text-center font-bold text-2xl mb-6">All Users</h1>
       {users.length === 0 ? (
        <div className="flex items-center justify-center h-screen">
        <div className="text-center">
@@ -116,22 +116,22 @@ const GetAllUsers = () => {
               <h3 className="text-lg font-semibold">{user.name}</h3>
               <p>{user.email}</p>
               <p>{user.mobile}</p>
-              <div className="mt-4 flex space-x-4">
+              <div className="mt-4 flex flex-wrap gap-3">
                 <button
                   onClick={() => handleActivate(user._id)}
-                  className="bg-black text-white px-4 py-2 rounded-none hover:bg-gray-800"
+                  className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition"
                 >
                   Activate
                 </button>
                 <button
                   onClick={() => handleDeactivate(user._id)}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-none hover:bg-gray-600"
+                  className="px-3 py-1 bg-yellow-600 text-white text-sm rounded hover:bg-yellow-700 transition"
                 >
                   Deactivate
                 </button>
                 <button
                   onClick={() => toggleModal(user._id)}
-                  className="bg-red-600 text-white px-4 py-2 rounded-none hover:bg-red-700"
+                  className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition"
                 >
                   Delete
                 </button>
