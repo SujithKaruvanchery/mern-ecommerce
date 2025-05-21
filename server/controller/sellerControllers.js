@@ -215,8 +215,8 @@ const deleteSeller = async (req, res) => {
 
 const getAllSellers = async (req, res) => {
     try {
-        const users = await SellerDB.find();
-        res.json(users);
+        const sellers = await SellerDB.find().populate("products");
+        res.json(sellers);
     } catch (error) {
         res.status(500).json({ message: 'Failed to retrieve users', error });
     }
